@@ -1,5 +1,5 @@
-const db = require("../db");
-const ExpressError = require("../helpers/ExpressError");
+const db = require("./db");
+// const ExpressError = require("./helpers/expressError");
 
 class Company {
   // get all companies

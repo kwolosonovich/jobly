@@ -2,9 +2,9 @@
 
 const express = require("express");
 // const ExpressError = require("./helpers/expressError");
-const ExpressError = require('./helpers/ExpressError')
+
 // routes
-const companiesRoutes = require("./routes/companies");
+const companiesRoutes = require("./routes.companies");
 
 const morgan = require("morgan");
 const app = express();

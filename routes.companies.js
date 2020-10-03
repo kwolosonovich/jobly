@@ -1,6 +1,6 @@
 const express = require("express");
-const ExpressError = require("../helpers/ExpressError")
-const Company = require('../models/Company')
+const ExpressError = require("./expressError")
+const Company = require('./models.companies')
 
 const router = new express.Router();
 
