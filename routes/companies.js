@@ -1,13 +1,23 @@
 const express = require("express");
-const ExpressError = require("../expressError")
-const Company = require('../models.companies')
+const ExpressError = require("../helpers/expressError")
+const Company = require('../models/company')
 
 const router = new express.Router();
 
-router.get("/", async function(req, res, next) {
+router.get("/", async function (req, res, next) {
   try {
-    let result = await Company.getAll();
-    return res.json({ result });
+    const companies = await Company.findAll(req.query);
+    return res.json({ companies });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+
+router.get("/:handle", async function (req, res, next) {
+  try {
+    const company = await Company.findOne(req.params.handle);
+    return res.json({ company });
   } catch (err) {
     return next(err);
   }
