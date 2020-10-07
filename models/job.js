@@ -1,5 +1,6 @@
 const db = require("../db");
 const ExpressError = require("../helpers/expressError");
+const sqlForPartialUpdate = require("../helpers/partialUpdate");
 
 class Job {
   static async getAll(data) {
@@ -72,6 +73,22 @@ class Job {
       ]
     );
     return result.rows[0]
+  }
+
+  // update job
+  static update = async(id, data) => {
+    let { query, values } = sqlForPartialUpdate(
+      "jobs",
+      data,
+      "id",
+      id
+    );
+    const result = await db.query(query, values);
+    const job = result.rows[0]
+    if (!job) {
+      throw new ExpressError("Job not found", 404);  
+    }
+    return job
   }
 
   // delete job 
