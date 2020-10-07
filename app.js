@@ -26,7 +26,7 @@ app.use(morgan("tiny"));
 app.use("/companies", companiesRouter);
 app.use("/jobs", jobsRouter);
 app.use("/users", usersRouter)
-app.ust("/auth", authRouter)
+app.use("/auth", authRouter)
 
 
 // log unhandledRejection reason and error  
