@@ -25,8 +25,11 @@ app.use(morgan("tiny"));
 app.use("/companies", companiesRouter);
 
 
+// log unhandledRejection reason and error  
 process.on("unhandledRejection", (reason, promise) => {
   console.log("Unhandled Rejection at:", promise, "reason:", reason);
+  const err = new ExpressError("Unhandled Rejection", 404);
+  return next(err);
 });
 
 
@@ -34,7 +37,6 @@ process.on("unhandledRejection", (reason, promise) => {
 
 app.use(function(req, res, next) {
   const err = new ExpressError("Not Found", 404);
-  // pass the error to the next piece of middleware
   return next(err);
 });
 

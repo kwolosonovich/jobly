@@ -5,7 +5,7 @@ const sqlForPartialUpdate = require("../helpers/partialUpdate");
 class Company {
   /** Find all companies (can filter on terms in data). */
 
-  static async findAll(data) {
+  static async getAll(data) {
     let baseQuery = `SELECT handle, name FROM companies`;
     let whereExpressions = [];
     let queryValues = [];
@@ -49,28 +49,28 @@ class Company {
 
   // get company by handle
 
-  static async findOne(handle) {
-    const companyRes = await db.query(
+  static async handleName(handle) {
+    const companyResult = await db.query(
       `SELECT handle, name, num_employees, description, logo_url
             FROM companies
             WHERE handle = $1`,
       [handle]
     );
 
-    const company = companyRes.rows[0];
+    const company = companyResult.rows[0];
 
     if (!company) {
-      throw new ExpressError(`There exists no company '${handle}'`, 404);
+      throw new ExpressError('Company not found', 404);
     }
 
-    const jobsRes = await db.query(
+    const jobsResult = await db.query(
       `SELECT id, title, salary, equity
             FROM jobs 
             WHERE company_handle = $1`,
       [handle]
     );
 
-    company.jobs = jobsRes.rows;
+    company.jobs = jobsResult.rows;
 
     return company;
   }
@@ -78,17 +78,16 @@ class Company {
   // add company 
 
   static async create(data) {
-    const duplicateCheck = await db.query(
+    const result = await db.query(
       `SELECT handle 
-      
             FROM companies 
             WHERE handle = $1`,
       [data.handle]
     );
 
-    if (duplicateCheck.rows[0]) {
+    if (result.rows[0]) {
       throw new ExpressError(
-        `There already exists a company with handle '${data.handle}`,
+        `Company handle '${data.handle}' already taken`,
         400
       );
     }
@@ -124,7 +123,7 @@ class Company {
     const company = result.rows[0];
 
     if (!company) {
-      throw new ExpressError(`There exists no company '${handle}`, 404);
+      throw new ExpressError("Company not found", 404);
     }
 
     return company;
@@ -141,7 +140,7 @@ class Company {
     );
 
     if (result.rows.length === 0) {
-      throw new ExpressError(`There exists no company '${handle}`, 404);
+      throw new ExpressError("Company not found", 404);
     }
   }
 }
