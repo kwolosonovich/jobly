@@ -19,7 +19,7 @@ router.get("/", async (req, res, next) => {
 // GET - search handle name
 
 router.get("/:handle", async (req, res, next) => {
-  let handle = req.params.handle
+  const handle = req.params.handle
   try {
     const company = await Company.handleName(handle);
     return res.json({ company });
@@ -60,7 +60,7 @@ router.delete("/:handle", async(req, res, next) => {
   let handle = req.params.handle
   try {
     const deleteCompany = await Company.delete(handle)
-    return res.json({ deleted: deleteCompany });
+    return res.json({ message: 'Company deleted' });
   } catch (err) {
     return next(err)
   }

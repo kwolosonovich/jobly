@@ -63,7 +63,7 @@ class Company {
     const company = result.rows[0];
 
     if (!company) {
-      throw new ExpressError('Company not found', 404);
+      throw new ExpressError('Match not found', 404);
     }
 
     // const jobsResult = await db.query(
@@ -81,6 +81,7 @@ class Company {
   // add new company 
 
   static add = async(data) => {
+    // check for duplicates 
     const result = await db.query(
       `SELECT handle 
             FROM companies 
