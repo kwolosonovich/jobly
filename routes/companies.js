@@ -4,7 +4,10 @@ const Company = require('../models/company')
 
 const router = new express.Router();
 
-router.get("/", async function (req, res, next) {
+
+// GET - all companies with filter
+
+router.get("/", async (req, res, next) => {
   try {
     const companies = await Company.getAll(req.query);
     return res.json({ companies });
@@ -13,15 +16,54 @@ router.get("/", async function (req, res, next) {
   }
 });
 
+// GET - search handle name
 
-router.get("/:handle", async function (req, res, next) {
+router.get("/:handle", async (req, res, next) => {
+  let handle = req.params.handle
   try {
-    const company = await Company.handleName(req.params.handle);
+    const company = await Company.handleName(handle);
     return res.json({ company });
   } catch (err) {
     return next(err);
   }
 });
 
+// POST - add new company 
+
+router.post("/", async(req, res, next) => {
+  let data = req.body // company object 
+  try {
+    const newCompany = await Company.add(data)
+    return res.json({company: newCompany})
+  } catch (err) {
+    return next(err);
+  }
+})
+
+// PATCH - update company
+
+router.patch("/:handle", async(req, res, next) => {
+  let handle = req.params.handle
+  let data = req.body 
+  try {
+    const updateCompany = await Company.update(handle, data);
+    return res.json({ updated: updateCompany });
+  } catch (err) {
+    return next(err);
+  }
+})
+
+
+// DELETE - delete company 
+
+router.delete("/:handle", async(req, res, next) => {
+  let handle = req.params.handle
+  try {
+    const deleteCompany = await Company.delete(handle)
+    return res.json({ deleted: deleteCompany });
+  } catch (err) {
+    return next(err)
+  }
+})
 
 module.exports = router;
