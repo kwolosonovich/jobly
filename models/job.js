@@ -5,4 +5,4 @@ class Job {
     
 }
 
-module.exports = User;
+module.exports = Job;
