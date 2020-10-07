@@ -6,9 +6,10 @@ const ExpressError = require("./helpers/expressError");
 
 // routes
 const companiesRouter = require("./routes/companies");
-const authRouter = require("./routes/auth")
+const jobsRouter = require("./routes/jobs");
 const usersRouter = require("./routes/users")
-const jobsRoutes = require("./routes/jobs")
+const authRouter = require("./routes/auth");
+
 
 const morgan = require("morgan");
 const app = express();
@@ -23,6 +24,9 @@ app.use(morgan("tiny"));
 
 // routes
 app.use("/companies", companiesRouter);
+app.use("/jobs", jobsRouter);
+app.use("/users", usersRouter)
+app.ust("/auth", authRouter)
 
 
 // log unhandledRejection reason and error  
