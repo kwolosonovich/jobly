@@ -31,7 +31,7 @@ class Job {
     // finalize query and return results
 
     let search =
-      baseQuery + whereExpressions.join(" AND ") + " ORDER BY name";
+      baseQuery + whereExpressions.join(" AND ") + " ORDER BY title";
     const result = await db.query(search, queryValues);
 
     if (!queryValues) {

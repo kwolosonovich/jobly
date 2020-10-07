@@ -7,7 +7,7 @@ CREATE TABLE companies (
 );
 
 CREATE TABLE jobs (
-    id INTEGER PRIMARY KEY, 
+    id SERIAL PRIMARY KEY, 
     title TEXT NOT NULL, 
     salary MONEY NOT NULL,
     equity FLOAT CHECK(equity <= 1.0),
