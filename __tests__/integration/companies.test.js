@@ -1,6 +1,8 @@
 const request = require('supertest')
 const app = require("../../app");
 
+const {beforeEachHook, afterAllHook}  = require("./jest.config")
+
 
 beforeEach(async function () {
   await beforeEachHook(TEST_DATA);
