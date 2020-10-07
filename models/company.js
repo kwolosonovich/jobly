@@ -5,7 +5,7 @@ const sqlForPartialUpdate = require("../helpers/partialUpdate");
 class Company {
   /** Find all companies (can filter on terms in data). */
 
-  static async getAll(data) {
+  static getAll = async(data) => {
     let baseQuery = `SELECT handle, name FROM companies`;
     let whereExpressions = [];
     let queryValues = [];
@@ -17,8 +17,7 @@ class Company {
       );
     }
 
-    // For each possible search term, add to whereExpressions and
-    // queryValues so we can generate the right SQL
+    // Add to whereExpressions and queryValues to generate SQL queries
 
     if (data.min_employees) {
       queryValues.push(+data.min_employees);
@@ -41,43 +40,47 @@ class Company {
 
     // Finalize query and return results
 
-    let finalQuery =
+    let search =
       baseQuery + whereExpressions.join(" AND ") + " ORDER BY name";
-    const companiesRes = await db.query(finalQuery, queryValues);
-    return companiesRes.rows;
+    const result = await db.query(search, queryValues);
+
+    if (!queryValues) {
+      throw new ExpressError('No matching companies found', 400)
+    }
+    return result.rows;
   }
 
   // get company by handle
 
-  static async handleName(handle) {
-    const companyResult = await db.query(
+  static handleName = async(handle) => {
+    const result = await db.query(
       `SELECT handle, name, num_employees, description, logo_url
             FROM companies
             WHERE handle = $1`,
       [handle]
     );
 
-    const company = companyResult.rows[0];
+    const company = result.rows[0];
 
     if (!company) {
       throw new ExpressError('Company not found', 404);
     }
 
-    const jobsResult = await db.query(
-      `SELECT id, title, salary, equity
-            FROM jobs 
-            WHERE company_handle = $1`,
-      [handle]
-    );
+    // const jobsResult = await db.query(
+    //   `SELECT id, title, salary, equity
+    //         FROM jobs 
+    //         WHERE company_handle = $1`,
+    //   [handle]
+    // );
 
-    company.jobs = jobsResult.rows;
+    // company.jobs = jobsResult.rows;
 
     return company;
   }
 
-  // add company 
+  // add new company 
 
-  static async create(data) {
+  static add = async(data) => {
     const result = await db.query(
       `SELECT handle 
             FROM companies 
@@ -92,7 +95,7 @@ class Company {
       );
     }
 
-    const result = await db.query(
+    const newCompany = await db.query(
       `INSERT INTO companies 
               (handle, name, num_employees, description, logo_url)
             VALUES ($1, $2, $3, $4, $5) 
@@ -106,12 +109,12 @@ class Company {
       ]
     );
 
-    return result.rows[0];
+    return newCompany.rows[0];
   }
 
   // update company
 
-  static async update(handle, data) {
+  static update = async(handle, data) => {
     let { query, values } = sqlForPartialUpdate(
       "companies",
       data,
@@ -131,7 +134,7 @@ class Company {
 
   // delete company
 
-  static async remove(handle) {
+  static delete = async(handle) => {
     const result = await db.query(
       `DELETE FROM companies 
           WHERE handle = $1 
@@ -142,6 +145,7 @@ class Company {
     if (result.rows.length === 0) {
       throw new ExpressError("Company not found", 404);
     }
+    return result.rows[0]
   }
 }
 
