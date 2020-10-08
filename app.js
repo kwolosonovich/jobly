@@ -10,7 +10,6 @@ const jobsRouter = require("./routes/jobs");
 const usersRouter = require("./routes/users")
 const authRouter = require("./routes/auth");
 
-
 const morgan = require("morgan");
 const app = express();
 
