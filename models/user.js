@@ -27,19 +27,19 @@ class User {
       return user;
     }
 
-    static add = async(data) => {
+    static add = async(user) => {
         const result = await db.query(
           `INSERT INTO users 
                 (username, password, first_name, last_name, email, photo_url)
                 VALUES ($1, $2, $3, $4, $5, $6)
                 RETURNING username, first_name, last_name, email, photo_url`,
             [
-                data.username,
-                data.password, 
-                data.first_name,
-                data.last_name,
-                data.email,
-                data.photo_url, 
+                user.username,
+                user.password, 
+                user.first_name,
+                user.last_name,
+                user.email,
+                user.photo_url, 
           ]
         );
         return result.rows[0]

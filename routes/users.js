@@ -14,7 +14,7 @@ const router = express.Router();
 router.get("/", async (req, res, next) => {
   try {
     const result = await User.getAll(req.query);
-    return res.json({ result });
+    return res.json({ users: result });
   } catch (err) {
     return next(err);
   }
