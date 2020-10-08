@@ -27,5 +27,6 @@ CREATE TABLE users(
     last_name TEXT,
     email TEXT,
     photo_url TEXT,
-    is_admin BOOLEAN NOT NULL default FALSE
+    is_admin BOOLEAN NOT NULL default FALSE,
+    last_login_at timestamp with time zone
 );
