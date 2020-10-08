@@ -71,7 +71,7 @@ class Job {
         data.equity, 
         data.company_handle
       ]
-    );
+    )
     return result.rows[0]
   }
 

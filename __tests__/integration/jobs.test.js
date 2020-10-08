@@ -1,23 +1,23 @@
-const request = require("supertest");
-const app = require("../../app");
+// const request = require("supertest");
+// const app = require("../../app");
 
-const {beforeEachHook, afterAllHook, testCompany, testJob, afterEachHook}  = require("./jest.config") 
+// const {beforeEachHook, afterAllHook, testCompany, testJob, afterEachHook}  = require("./jest.config") 
 
 
-beforeEach(async() => {
-    await beforeEachHook();
-    await testCompany()
-    await testJob();
-});
+// beforeEach(async() => {
+//     await beforeEachHook();
+//     await testCompany()
+//     await testJob();
+// });
 
-describe("GET, /jobs", () => {
-    test('get jobs', async() => {
-        const result = await request(app)
-        .get("/jobs")    
-        expect(result.statusCode).toBe(200);
-        expect(result.body.result[0]).toHaveProperty("title");
-    })
-});
+// describe("GET, /jobs", () => {
+//     test('get jobs', async() => {
+//         const result = await request(app)
+//         .get("/jobs")    
+//         expect(result.statusCode).toBe(200);
+//         expect(result.body.result[0]).toHaveProperty("title");
+//     })
+// });
 
 // describe("GET /jobs/:id", () => {
 //   test("get job by id", async () => {
@@ -63,10 +63,10 @@ describe("GET, /jobs", () => {
 //     })
 // })
 
-afterEach(async() => {
-    await afterEachHook()
-})
+// afterEach(async() => {
+//     await afterEachHook()
+// })
 
-afterAll(async() => {
-  await afterAllHook();
-});
+// afterAll(async() => {
+//   await afterAllHook();
+// });

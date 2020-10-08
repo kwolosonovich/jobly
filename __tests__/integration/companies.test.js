@@ -1,7 +1,7 @@
 const request = require('supertest')
 const app = require("../../app");
 
-const {beforeEachHook, afterAllHook, testCompanies}  = require("./jest.config")
+const {beforeEachHook, afterAllHook, testCompany}  = require("./jest.config")
 
 beforeEach(async() => {
     await beforeEachHook();
@@ -61,9 +61,6 @@ describe("DELETE /companies/handle", () => {
     })
 })
 
-// afterEach(async () => {
-//   await afterEachHook();
-// });
 
 afterAll(async() => {
   await afterAllHook();

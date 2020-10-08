@@ -32,7 +32,10 @@ testCompany = async() => {
       description: "Company1 description",
       logo_url: "company1Url",
     };
+
+// TODO: why does this work instead of db.query(INSERT INTO)? 
     await Company.add(company1)
+
 }
 
 testJob = async() => {
@@ -43,7 +46,8 @@ testJob = async() => {
         equity: 0.5,
         company_handle: "c1"
     } 
-    // await Job.add(job1)
+
+    await Job.add(job1)
 
     await db.query(
       `INSERT INTO jobs (id, title, salary, equity, company_handle) 
@@ -53,10 +57,37 @@ testJob = async() => {
     );
 }
 
+testUser = async() => {
+    const user = {
+      username: "testUserName",
+      password: "testPassword",
+      first_name: "testFirstName",
+      last_name: "testLastName",
+      email: "testEmail",
+      photo_url: "testURL"
+    };
+    await db.query(
+      `INSERT INTO users 
+                (username, password, first_name, last_name, email, photo_url)
+                VALUES ($1, $2, $3, $4, $5, $6)
+                RETURNING username, first_name, last_name, email, photo_url`,
+      [
+        user.username,
+        user.password,
+        user.first_name,
+        user.last_name,
+        user.email,
+        user.photo_url,
+      ]
+    );
+}
+
 module.exports = {
   beforeEachHook,
   afterEachHook,
   afterAllHook,
   testCompany,
-  testJob
+  testJob,
+  testUser,
+  verbose: true
 };
