@@ -1,3 +1,8 @@
+DROP TABLE IF EXISTS companies
+DROP TABLE IF EXISTS jobs
+DROP TABLE IF EXISTS users
+
+
 CREATE TABLE companies (
     handle TEXT PRIMARY KEY, 
     name TEXT NOT NULL UNIQUE, 

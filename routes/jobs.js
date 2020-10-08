@@ -21,7 +21,7 @@ router.get("/:id", async(req, res, next) => {
     let id = req.params.id
     try {
       const result = await Job.getID(id);
-      return res.json({ job: result });
+      return res.json({ result });
     } catch (err) {
       return next(err);
     }

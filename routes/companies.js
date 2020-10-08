@@ -22,7 +22,7 @@ router.get("/:handle", async (req, res, next) => {
   const handle = req.params.handle
   try {
     const company = await Company.handleName(handle);
-    return res.json({ company });
+    return res.status(201).json({ company: company });
   } catch (err) {
     return next(err);
   }
