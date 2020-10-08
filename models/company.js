@@ -3,7 +3,7 @@ const ExpressError = require("../helpers/expressError");
 const sqlForPartialUpdate = require("../helpers/partialUpdate");
 
 class Company {
-  /** Find all companies (can filter on terms in data). */
+  // Get all companies - with filter
 
   static getAll = async(data) => {
     let baseQuery = `SELECT handle, name FROM companies`;
