@@ -62,9 +62,9 @@ class Job {
   static add = async(data) => {
     const result = await db.query(
       `INSERT INTO jobs 
-      (title, salary, equity, company_handle) 
-      VALUES ($1, $2, $3, $4)
-      RETURNING id, title, salary, equity, company_handle`, 
+      (title, salary, equity, company_handle, date_posted) 
+      VALUES ($1, $2, $3, $4, current_timestamp)
+      RETURNING id, title, salary, equity, company_handle, current_timestamp`, 
       [
         data.title, 
         data.salary, 
