@@ -14,6 +14,7 @@
       "logo_url": "logoUrl"
     }
   ],
+  "required": [],
   "properties": {
     "handle": {
       "$id": "#/properties/handle",
