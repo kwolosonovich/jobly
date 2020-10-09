@@ -22,7 +22,7 @@
       "title": "The username schema",
       "description": "New user account.",
       "default": "",
-      "examples": ["newUser1"]
+      "examples": ["AvaS"]
     },
     "first_name": {
       "$id": "#/properties/first_name",
@@ -30,7 +30,7 @@
       "title": "The first_name schema",
       "description": "User first name.",
       "default": "",
-      "examples": ["Frist"]
+      "examples": ["Ava"]
     },
     "last_name": {
       "$id": "#/properties/last_name",
@@ -38,7 +38,7 @@
       "title": "The last_name schema",
       "description": "User last name.",
       "default": "",
-      "examples": ["Last"]
+      "examples": ["Smith"]
     },
     "email": {
       "$id": "#/properties/email",
@@ -46,7 +46,7 @@
       "title": "The email schema",
       "description": "User email address.",
       "default": "",
-      "examples": ["testemail@gmail.com"]
+      "examples": ["ava.smith@gmail.com"]
     },
     "photo_url": {
       "$id": "#/properties/photo_url",
