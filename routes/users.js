@@ -1,10 +1,13 @@
 const express = require("express");
 const ExpressError = require("../helpers/expressError");
-const { ensureCorrectUser, authRequired } = require("../middleware/authenticate");
+const {
+  authenticateJWT,
+  ensureAdmin,
+  ensureCorrectUser,
+} = require("../middleware/authenticate");
 const User = require("../models/user");
 // const { validate } = require("jsonschema");
 // const { userNewSchema, userUpdateSchema } = require("../schemas");
-// const createToken = require("../helpers/createToken");
 
 const router = express.Router();
 
@@ -46,7 +49,7 @@ router.post("/", async(req, res, next) => {
 
 // PATCH - update user
 
-router.patch("/:username", async(req, res, next) => {
+router.patch("/:username", ensureCorrectUser, async(req, res, next) => {
   let username = req.params.username
   let data = req.body 
   try {
@@ -60,7 +63,7 @@ router.patch("/:username", async(req, res, next) => {
 
 // DELETE - delete user 
 
-router.delete("/:username", async(req, res, next) => {
+router.delete("/:username", ensureCorrectUser, async(req, res, next) => {
   let username = req.params.username
   try {
     const result = await User.delete(username)

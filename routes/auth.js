@@ -13,10 +13,11 @@ router.post("/login", async (req, res, next) => {
     const username = req.body.username
     const password = req.body.password
     if (!username || !password) {
-      throw new ExpressError("Please submit username and password", 401)
+      throw new ExpressError("Username and password required", 401);
     }
     const user = await User.authenticate(username, password);
     const token = createToken(user);
+        User.updateLoginTimestamp(username);
     return res.json({ token });
   } catch (err) {
     return next(err);
@@ -27,7 +28,7 @@ router.post("/register", async function (req, res, next) {
   try {
     const { username, password } = req.body;
     if (!username || !password) {
-      throw new ExpressError("Please submit username and password", 401);
+      throw new ExpressError("Username and password required", 401);
     }
 
     const registerUser = await User.register(req.body); // register user

@@ -1,13 +1,18 @@
 const express = require("express");
 const ExpressError = require("../helpers/expressError")
 const Company = require('../models/company')
+const {
+  authenticateJWT,
+  ensureAdmin,
+  ensureCorrectUser,
+} = require("../middleware/authenticate");
 
 const router = new express.Router();
 
 
 // GET - all companies with filter
 
-router.get("/", async (req, res, next) => {
+router.get("/", authenticateJWT, async (req, res, next) => {
   try {
     const companies = await Company.getAll(req.query);
     return res.json({ companies });
@@ -18,7 +23,7 @@ router.get("/", async (req, res, next) => {
 
 // GET - search handle name
 
-router.get("/:handle", async (req, res, next) => {
+router.get("/:handle", authenticateJWT, async (req, res, next) => {
   const handle = req.params.handle
   try {
     const company = await Company.handleName(handle);
@@ -30,7 +35,7 @@ router.get("/:handle", async (req, res, next) => {
 
 // POST - add new company 
 
-router.post("/", async(req, res, next) => {
+router.post("/", ensureAdmin, async(req, res, next) => {
   let data = req.body // company object 
   try {
     const newCompany = await Company.add(data)
@@ -42,7 +47,7 @@ router.post("/", async(req, res, next) => {
 
 // PATCH - update company
 
-router.patch("/:handle", async(req, res, next) => {
+router.patch("/:handle", ensureAdmin, async(req, res, next) => {
   let handle = req.params.handle
   let data = req.body 
   try {
@@ -53,10 +58,9 @@ router.patch("/:handle", async(req, res, next) => {
   }
 })
 
-
 // DELETE - delete company 
 
-router.delete("/:handle", async(req, res, next) => {
+router.delete("/:handle", ensureAdmin, async(req, res, next) => {
   let handle = req.params.handle
   try {
     const deleteCompany = await Company.delete(handle)

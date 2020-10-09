@@ -9,22 +9,31 @@ const ExpressError = require("../helpers/expressError");
 
 function authenticateJWT(req, res, next) {
   try {
-    const tokenFromBody = req.body._token;
-    const payload = jwt.verify(tokenFromBody, SECRET_KEY);
+    const tokenStr = req.body._token || req.query._token;
+    const payload = jwt.verify(tokenStr, SECRET_KEY);
     req.user = payload;
+    res.locals.username = token.username;
     return next();
   } catch (err) {
-    return next();
+    return next(new ExpressError("Unathorized", 401));
   }
 }
 
-// Requires user is authenticated
+// Requires user is admin
 
-function ensureLoggedIn(req, res, next) {
-  if (!req.user) {
-    return next({ status: 401, message: "Unauthorized" });
-  } else {
-    return next();
+function ensureAdmin(req, res, next) {
+  try {
+    const tokenStr = req.body._token;
+
+    let token = jwt.verify(tokenStr, SECRET_KEY);
+    res.locals.username = token.username;
+
+    if (token.is_admin) {
+      return next();
+    }
+    throw new Error();
+  } catch (err) {
+    return next(new ExpressError("You must be an admin to access", 401));
   }
 }
 
@@ -44,6 +53,6 @@ function ensureCorrectUser(req, res, next) {
 
 module.exports = {
   authenticateJWT,
-  ensureLoggedIn,
-  ensureCorrectUser
+  ensureAdmin,
+  ensureCorrectUser,
 };

@@ -1,12 +1,17 @@
 const express = require("express");
 const ExpressError = require("../helpers/expressError");
 const Job = require("../models/job");
+const {
+  authenticateJWT,
+  ensureAdmin,
+  ensureCorrectUser,
+} = require("../middleware/authenticate");
 
 const router = new express.Router();
 
 // GET - all jobs with filter 
 
-router.get("/", async(req, res, next) => {
+router.get("/", authenticateJWT, async(req, res, next) => {
     try {
         const result = await Job.getAll(req.query)
         return res.json({ result })
@@ -17,19 +22,19 @@ router.get("/", async(req, res, next) => {
 
 // GET - search by id
 
-router.get("/:id", async(req, res, next) => {
-    let id = req.params.id
-    try {
-      const result = await Job.getID(id);
-      return res.json({ result });
-    } catch (err) {
-      return next(err);
-    }
-})
+router.get("/:id", authenticateJWT, async (req, res, next) => {
+  let id = req.params.id;
+  try {
+    const result = await Job.getID(id);
+    return res.json({ result });
+  } catch (err) {
+    return next(err);
+  }
+});
 
 // POST - add new job 
 
-router.post("/", async(req, res, next) => {
+router.post("/", ensureAdmin, async(req, res, next) => {
     const data = req.body
     try {
       const result = await Job.add(data);
@@ -41,7 +46,7 @@ router.post("/", async(req, res, next) => {
 
 // PATCH - update job
 
-router.patch("/:id", async(req, res, next) => {
+router.patch("/:id", ensureAdmin, async(req, res, next) => {
     const id = req.params.id
     const data = req.body
     try {
@@ -54,7 +59,7 @@ router.patch("/:id", async(req, res, next) => {
 
 // DELETE - delete job by id
 
-router.delete("/:id", async(req, res, next) => {
+router.delete("/:id", ensureAdmin, async(req, res, next) => {
     const id = req.params.id
     try {
       const result = await Job.delete(id);

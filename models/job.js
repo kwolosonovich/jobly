@@ -2,6 +2,7 @@ const db = require("../db");
 const ExpressError = require("../helpers/expressError");
 const sqlForPartialUpdate = require("../helpers/partialUpdate");
 
+
 class Job {
   static async getAll(data) {
     let baseQuery = "SELECT id, title, company_handle FROM jobs";
