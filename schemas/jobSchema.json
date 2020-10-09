@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://example.com/example.json",
+  "type": "object",
+  "title": "The root schema",
+  "description": "The root schema comprises the entire JSON document.",
+  "default": {},
+  "examples": [
+    {
+      "title": "Engineer",
+      "salary": 1000,
+      "equity": ".5",
+      "company_handle": "RefineryNet"
+    }
+  ],
+  "required": ["title", "salary", "company_handle"],
+  "properties": {
+    "title": {
+      "$id": "#/properties/title",
+      "type": "string",
+      "title": "The title schema",
+      "description": "Job title.",
+      "default": "",
+      "examples": ["Engineer"]
+    },
+    "salary": {
+      "$id": "#/properties/salary",
+      "type": "integer",
+      "title": "The salary schema",
+      "description": "Position salary.",
+      "default": 0,
+      "examples": [1000]
+    },
+    "equity": {
+      "$id": "#/properties/equity",
+      "type": "string",
+      "title": "The equity schema",
+      "description": "Position equity.",
+      "default": "",
+      "examples": [".5"]
+    },
+    "company_handle": {
+      "$id": "#/properties/company_handle",
+      "type": "string",
+      "title": "The company_handle schema",
+      "description": "Hiring company.",
+      "default": "",
+      "examples": ["RefineryNet"]
+    }
+  },
+  "additionalProperties": true
+}
