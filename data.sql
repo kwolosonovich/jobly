@@ -23,9 +23,9 @@ CREATE TABLE jobs (
 CREATE TABLE users(
     username TEXT PRIMARY KEY,
     password TEXT NOT NULL,
-    first_name TEXT,
-    last_name TEXT,
-    email TEXT,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
     photo_url TEXT,
     is_admin BOOLEAN NOT NULL default FALSE,
     last_login_at timestamp with time zone
