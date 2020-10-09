@@ -10,7 +10,6 @@ const jsonSchema = require("jsonschema")
 const userSchema = require("../schemas/userSchema")
 const updateUserSchema = require("../schemas/updateUserSchema")
 
-// const { validate } = require("jsonschema");
 // const { userNewSchema, userUpdateSchema } = require("../schemas");
 
 const router = express.Router();
@@ -43,11 +42,11 @@ router.get("/:username", async (req, res, next) => {
 
 router.post("/", async(req, res, next) => {
   let user = req.body
-  
-  let result = jsonSchema.validate(user, userSchema);
+  let input = jsonSchema.validate(user, userSchema);
 
-  if (!result.valid) {
+  if (!input.valid) {
       let error = new ExpressError("Invalid user fields", 401)
+       const token = createToken(newUser);
       return next(error);
   }
 
@@ -62,10 +61,19 @@ router.post("/", async(req, res, next) => {
 // PATCH - update user
 
 router.patch("/:username", ensureCorrectUser, async(req, res, next) => {
-  let username = req.params.username
-  let data = req.body 
+  let username = req.params.username;
+  let userData = req.body;
+
+  // validate user inputs with schema
+  let result = jsonSchema.validate(userData, updateUserSchema);
+
+  if (!result.valid) {
+    let error = new ExpressError("Invalid user fields", 401);
+    return next(error);
+  }
+
   try {
-    const result = await User.update(username, data);
+    const result = await User.update(username, userData);
     return res.json({ updated: result });
   } catch (err) {
     return next(err);
@@ -76,9 +84,11 @@ router.patch("/:username", ensureCorrectUser, async(req, res, next) => {
 // DELETE - delete user 
 
 router.delete("/:username", ensureCorrectUser, async(req, res, next) => {
+// router.delete("/:username", async(req, res, next) => {
   let username = req.params.username
+  let password = req.body.password
   try {
-    const result = await User.delete(username)
+    const result = await User.delete(username, password)
     return res.json({ message: 'User deleted' });
   } catch (err) {
     return next(err)

@@ -14,16 +14,8 @@
       "photo_url": "https://picsum.photos/id/237/200/300"
     }
   ],
-  "required": ["username", "first_name", "last_name", "email"],
+  "required": ["first_name", "last_name"],
   "properties": {
-    "username": {
-      "$id": "#/properties/username",
-      "type": "string",
-      "title": "The username schema",
-      "description": "New user account.",
-      "default": "",
-      "examples": ["AvaS"]
-    },
     "first_name": {
       "$id": "#/properties/first_name",
       "type": "string",

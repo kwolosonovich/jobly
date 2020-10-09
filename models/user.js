@@ -99,10 +99,19 @@ class User {
 
   // update user
 
-  static update = async (username, data) => {
+  static update = async (username, userData) => {
+
+    // verify hashed password
+    if (userData.password) {
+        userData.password = await bcrypt.hash(
+          data.password,
+          BCRYPT_WORK_FACTOR
+        );
+    }
+
     const { query, values } = sqlForPartialUpdate(
       "users",
-      data,
+      userData,
       "username",
       username
     );
@@ -111,14 +120,19 @@ class User {
     const user = result.rows[0];
 
     if (!user) {
-      throw new ExpressError("Company not found", 404);
+      throw new ExpressError("User not found", 404);
     }
     return user;
   };
 
   // delete user
 
-  static delete = async (username) => {
+  static delete = async (username, password) => {
+    // verify hashed password
+    if (password) {
+      password = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
+    }
+
     const result = await db.query(
       `DELETE FROM users
             WHERE username = $1

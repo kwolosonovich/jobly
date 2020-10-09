@@ -1,7 +1,18 @@
-DROP TABLE IF EXISTS companies
-DROP TABLE IF EXISTS jobs
-DROP TABLE IF EXISTS users
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS jobs;
+DROP TABLE IF EXISTS companies;
 
+
+CREATE TABLE users(
+    username TEXT PRIMARY KEY,
+    password TEXT NOT NULL,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    photo_url TEXT,
+    is_admin BOOLEAN NOT NULL default FALSE,
+    last_login_at timestamp with time zone
+);
 
 CREATE TABLE companies (
     handle TEXT PRIMARY KEY, 
@@ -20,13 +31,4 @@ CREATE TABLE jobs (
     date_posted timestamp with time zone
 );
 
-CREATE TABLE users(
-    username TEXT PRIMARY KEY,
-    password TEXT NOT NULL,
-    first_name TEXT NOT NULL,
-    last_name TEXT NOT NULL,
-    email TEXT NOT NULL UNIQUE,
-    photo_url TEXT,
-    is_admin BOOLEAN NOT NULL default FALSE,
-    last_login_at timestamp with time zone
-);
+
