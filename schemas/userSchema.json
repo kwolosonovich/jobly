@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://example.com/example.json",
+  "type": "object",
+  "title": "The root schema",
+  "description": "The root schema comprises the entire JSON document.",
+  "default": {},
+  "examples": [
+    {
+      "username": "newUser1",
+      "first_name": "Frist",
+      "last_name": "Last",
+      "email": "testemail@gmail.com",
+      "photo_url": "https://picsum.photos/id/237/200/300"
+    }
+  ],
+  "required": ["username", "first_name", "last_name", "email"],
+  "properties": {
+    "username": {
+      "$id": "#/properties/username",
+      "type": "string",
+      "title": "The username schema",
+      "description": "New user account.",
+      "default": "",
+      "examples": ["newUser1"]
+    },
+    "first_name": {
+      "$id": "#/properties/first_name",
+      "type": "string",
+      "title": "The first_name schema",
+      "description": "User first name.",
+      "default": "",
+      "examples": ["Frist"]
+    },
+    "last_name": {
+      "$id": "#/properties/last_name",
+      "type": "string",
+      "title": "The last_name schema",
+      "description": "User last name.",
+      "default": "",
+      "examples": ["Last"]
+    },
+    "email": {
+      "$id": "#/properties/email",
+      "type": "string",
+      "title": "The email schema",
+      "description": "User email address.",
+      "default": "",
+      "examples": ["testemail@gmail.com"]
+    },
+    "photo_url": {
+      "$id": "#/properties/photo_url",
+      "type": "string",
+      "title": "The photo_url schema",
+      "description": "User profile picture.",
+      "default": "",
+      "examples": ["https://picsum.photos/id/237/200/300"]
+    }
+  },
+  "additionalProperties": true
+}

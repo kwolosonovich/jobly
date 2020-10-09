@@ -6,6 +6,10 @@ const {
   ensureCorrectUser,
 } = require("../middleware/authenticate");
 const User = require("../models/user");
+const jsonSchema = require("jsonschema")
+const userSchema = require("../schemas/userSchema")
+const updateUserSchema = require("../schemas/updateUserSchema")
+
 // const { validate } = require("jsonschema");
 // const { userNewSchema, userUpdateSchema } = require("../schemas");
 
@@ -38,9 +42,17 @@ router.get("/:username", async (req, res, next) => {
 // POST - add new user 
 
 router.post("/", async(req, res, next) => {
-  let user = req.body 
+  let user = req.body
+  
+  let result = jsonSchema.validate(user, userSchema);
+
+  if (!result.valid) {
+      let error = new ExpressError("Invalid user fields", 401)
+      return next(error);
+  }
+
   try {
-    const result = await User.add(user)
+    let result = await User.add(user)
     return res.json({ user: result})
   } catch (err) {
     return next(err);
