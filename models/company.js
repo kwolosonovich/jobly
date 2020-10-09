@@ -66,15 +66,6 @@ class Company {
       throw new ExpressError('Match not found', 404);
     }
 
-    // const jobsResult = await db.query(
-    //   `SELECT id, title, salary, equity
-    //         FROM jobs 
-    //         WHERE company_handle = $1`,
-    //   [handle]
-    // );
-
-    // company.jobs = jobsResult.rows;
-
     return company;
   }
 
