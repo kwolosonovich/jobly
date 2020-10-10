@@ -5,12 +5,12 @@ const bcrypt = require("bcrypt");
 const { BCRYPT_WORK_FACTOR } = require("../config");
 
 class User {
+
   // register new user
 
   static register = async (user) => {
-    console.log(user);
-    const hashedPassword = await bcrypt.hash(user.password, BCRYPT_WORK_FACTOR);
-    const result = await db.query(
+    const hashedPassword = await bcrypt.hash(user.password, BCRYPT_WORK_FACTOR); // hash password
+    const result = await db.query(  // add user to db 
       `INSERT INTO users (username, password, first_name, last_name, email, photo_url)
              VALUES ($1, $2, $3, $4, $5, $6)
              RETURNING username, is_admin`,
@@ -23,20 +23,25 @@ class User {
         user.photo_url,
       ]
     );
-    return result;
+    return result; // return user object
   };
 
   // authenticate user and return true/false
 
-  static authenticate = async (username, password) => {
+  static authenticate = async (username, inputPassword) => {
     const result = await db.query(
-      `
-            SELECT password FROM users 
-            WHERE username = $1`,
+      `SELECT password FROM users 
+        WHERE username = $1`,
       [username]
     );
-    let checkPassword = result.rows[0].password;
-    return result && (await bcrypt.compare(password, checkPassword));
+    let dbPassword = result.rows[0].password;
+    let verified = await bcrypt.compare(inputpassword, dbPassword);
+    if (verified) {
+        return result 
+    }
+    else {
+        throw ExpressError("Invalid Password", 401);
+    }
   };
 
   // login timestamp
@@ -80,6 +85,8 @@ class User {
   // register new user
 
   static register = async (user) => {
+      console.log("method:")
+      console.log(user)
     const result = await db.query(
       `INSERT INTO users 
                 (username, password, first_name, last_name, email, photo_url)
@@ -127,12 +134,7 @@ class User {
 
   // delete user
 
-  static delete = async (username, password) => {
-    // verify hashed password
-    if (password) {
-      password = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
-    }
-
+  static delete = async (username) => {
     const result = await db.query(
       `DELETE FROM users
             WHERE username = $1

@@ -9,12 +9,13 @@ const User = require("../models/user");
 const jsonSchema = require("jsonschema")
 const userSchema = require("../schemas/userSchema")
 const updateUserSchema = require("../schemas/updateUserSchema")
-const token = require("../helpers/token")
+const getToken = require("../helpers/token");
+const authenticate = require("../middleware/authenticate");
 
 const router = express.Router();
 
 
-// GET - all users with filter
+// GET - all users
 
 router.get("/", async (req, res, next) => {
   try {
@@ -25,7 +26,7 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-// GET - search username 
+// GET - search for user by username 
 
 router.get("/:username", async (req, res, next) => {
   const username = req.params.username;
@@ -37,11 +38,11 @@ router.get("/:username", async (req, res, next) => {
   }
 });
 
-// POST - register a new user  
+// POST - register a new user
 
 router.post("/", async(req, res, next) => {
   let user = req.body
-  let input = jsonSchema.validate(user, userSchema);  // validate inputs
+  let input = jsonSchema.validate(user, userSchema);  // validate user inputs
 
   if (!input.valid) {
       let error = new ExpressError("Invalid user fields", 401)
@@ -58,7 +59,7 @@ router.post("/", async(req, res, next) => {
   }
 })
 
-// PATCH - update user
+// PATCH - update user; authenticate JWT to ensure correct user
 
 router.patch("/:username", ensureCorrectUser, async(req, res, next) => {
   let username = req.params.username;
@@ -79,14 +80,14 @@ router.patch("/:username", ensureCorrectUser, async(req, res, next) => {
   }
 })
 
-
-// DELETE - delete user 
+// DELETE - delete user; authenticate JWT and password to ensure correct user 
 
 router.delete("/:username", ensureCorrectUser, async(req, res, next) => {
   let username = req.params.username
-  let password = req.body.password
+//   let password = req.body.password
   try {
-    const result = await User.delete(username, password)
+    // const authenticate = await User.authenticate(username, password); // verify username and password
+    const result = await User.delete(username)
     return res.json({ message: 'User deleted' });
   } catch (err) {
     return next(err)
