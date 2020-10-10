@@ -77,9 +77,9 @@ class User {
     return user;
   };
 
-  // add new user
+  // register new user
 
-  static add = async (user) => {
+  static register = async (user) => {
     const result = await db.query(
       `INSERT INTO users 
                 (username, password, first_name, last_name, email, photo_url)

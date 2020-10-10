@@ -37,11 +37,11 @@ router.get("/:username", async (req, res, next) => {
   }
 });
 
-// POST - add new user 
+// POST - register a new user  
 
 router.post("/", async(req, res, next) => {
   let user = req.body
-  let input = jsonSchema.validate(user, userSchema);
+  let input = jsonSchema.validate(user, userSchema);  // validate inputs
 
   if (!input.valid) {
       let error = new ExpressError("Invalid user fields", 401)
@@ -49,8 +49,10 @@ router.post("/", async(req, res, next) => {
   }
 
   try {
-    let result = await User.add(user)
-    return res.json({ user: result})
+    let registerUser = await User.register(user); // register user; add to db 
+    const token = await getToken(registerUser); // get new JWT
+    User.updateLoginTimestamp(registerUser.username); // update db login timestamp
+    return res.json({ token });
   } catch (err) {
     return next(err);
   }
@@ -62,9 +64,8 @@ router.patch("/:username", ensureCorrectUser, async(req, res, next) => {
   let username = req.params.username;
   let userData = req.body;
 
-  // validate user inputs with schema
-  let result = jsonSchema.validate(userData, updateUserSchema);
-
+  let result = jsonSchema.validate(userData, updateUserSchema); // validate user inputs
+  
   if (!result.valid) {
     let error = new ExpressError("Invalid user fields", 401);
     return next(error);
@@ -82,7 +83,6 @@ router.patch("/:username", ensureCorrectUser, async(req, res, next) => {
 // DELETE - delete user 
 
 router.delete("/:username", ensureCorrectUser, async(req, res, next) => {
-// router.delete("/:username", async(req, res, next) => {
   let username = req.params.username
   let password = req.body.password
   try {
