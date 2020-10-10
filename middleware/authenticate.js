@@ -9,8 +9,8 @@ const ExpressError = require("../helpers/expressError");
 
 function authenticateJWT(req, res, next) {
   try {
-    const tokenStr = req.body._token || req.query._token;
-    const payload = jwt.verify(tokenStr, SECRET_KEY);
+    const inputToken = req.body._token || req.query._token;
+    const payload = jwt.verify(inputToken, SECRET_KEY);
     req.user = payload;
     res.locals.username = token.username;
     return next();
@@ -23,9 +23,9 @@ function authenticateJWT(req, res, next) {
 
 function ensureAdmin(req, res, next) {
   try {
-    const tokenStr = req.body._token;
+    const inputToken = req.body._token;
 
-    let token = jwt.verify(tokenStr, SECRET_KEY);
+    let token = jwt.verify(inputToken, SECRET_KEY);
     res.locals.username = token.username;
 
     if (token.is_admin) {

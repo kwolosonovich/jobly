@@ -9,8 +9,7 @@ const User = require("../models/user");
 const jsonSchema = require("jsonschema")
 const userSchema = require("../schemas/userSchema")
 const updateUserSchema = require("../schemas/updateUserSchema")
-
-// const { userNewSchema, userUpdateSchema } = require("../schemas");
+const token = require("../helpers/token")
 
 const router = express.Router();
 
@@ -46,7 +45,6 @@ router.post("/", async(req, res, next) => {
 
   if (!input.valid) {
       let error = new ExpressError("Invalid user fields", 401)
-       const token = createToken(newUser);
       return next(error);
   }
 

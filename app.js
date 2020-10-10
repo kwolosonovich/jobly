@@ -10,6 +10,9 @@ const jobsRouter = require("./routes/jobs");
 const usersRouter = require("./routes/users")
 const authRouter = require("./routes/auth");
 
+//middleware 
+// const authenticate = require("./middleware/authenticate")
+
 const morgan = require("morgan");
 const app = express();
 
