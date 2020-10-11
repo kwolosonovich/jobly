@@ -4,7 +4,6 @@ const express = require("express");
 const cors = require("cors");
 const ExpressError = require("./helpers/expressError");
 
-// routes
 const companiesRouter = require("./routes/companies");
 const jobsRouter = require("./routes/jobs");
 const usersRouter = require("./routes/users")
@@ -19,8 +18,8 @@ app.use(express.json());
 // allow connections to all routes from any browser
 app.use(cors());
 
-// add logging system
-app.use(morgan("tiny"));
+// HTTP request logger middleware
+app.use(morgan("dev"));
 
 // routes
 app.use("/companies", companiesRouter);

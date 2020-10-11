@@ -13,8 +13,8 @@ const router = new express.Router();
 
 router.get("/", authenticateJWT, async(req, res, next) => {
     try {
-        const result = await Job.getAll(req.query)
-        return res.json({ result })
+        const result = await Job.getAll(req.query)  // query all jobs
+        return res.json({ result }) // return array of jobs objects 
     } catch (err) {
         return next(err)
     }
@@ -25,8 +25,8 @@ router.get("/", authenticateJWT, async(req, res, next) => {
 router.get("/:id", authenticateJWT, async (req, res, next) => {
   let id = req.params.id;
   try {
-    const result = await Job.getID(id);
-    return res.json({ result });
+    const result = await Job.getID(id); // query jobs by company ID
+    return res.json({ result });  // return job object 
   } catch (err) {
     return next(err);
   }
@@ -37,8 +37,8 @@ router.get("/:id", authenticateJWT, async (req, res, next) => {
 router.post("/", ensureAdmin, async(req, res, next) => {
     const data = req.body
     try {
-      const result = await Job.add(data);
-      return res.json({ job: result });
+      const result = await Job.add(data);  // add new job to db 
+      return res.json({ job: result });  // return job object 
     } catch (err) {
       return next(err);
     }
@@ -50,8 +50,8 @@ router.patch("/:id", ensureAdmin, async(req, res, next) => {
     const id = req.params.id
     const data = req.body
     try {
-      const result = await Job.update(id, data);
-      return res.json({ job: result });
+      const result = await Job.update(id, data);  // update existing job in db 
+      return res.json({ job: result });  // return updated job object 
     } catch (err) {
       return next(err);
     }
@@ -62,8 +62,8 @@ router.patch("/:id", ensureAdmin, async(req, res, next) => {
 router.delete("/:id", ensureAdmin, async(req, res, next) => {
     const id = req.params.id
     try {
-      const result = await Job.delete(id);
-      return res.json({ message: "Job deleted" });
+      const result = await Job.delete(id);  // delete job from db 
+      return res.json({ message: "Job deleted" });  // return msg if successful
     } catch (err) {
       return next(err);
     }

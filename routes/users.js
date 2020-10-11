@@ -86,11 +86,11 @@ router.patch("/:username", ensureCorrectUser, async (req, res, next) => {
 
 router.delete("/:username", ensureCorrectUser, async (req, res, next) => {
     let username = req.params.username
-    //   let password = req.body.password
+    let password = req.body.password
     try {
         let verifyUser = await User.validatePassword(username, password); // verify username and password
-        let result = await User.delete(username)
-        return res.json({ message: 'User deleted' });
+        let result = await User.delete(username)  // delete user from db 
+        return res.json({ message: 'User deleted' });  // return msg if successful
     } catch (err) {
         return next(err)
     }

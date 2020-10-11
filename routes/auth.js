@@ -5,6 +5,9 @@ const ExpressError = require("../helpers/expressError");
 
 const router = new express.Router();
 
+// login returning user/admin
+// validate username and password
+
 router.post("/login", async (req, res, next) => {
   try {
     const username = req.body.username
@@ -12,8 +15,7 @@ router.post("/login", async (req, res, next) => {
     if (!username || !password) {
       throw new ExpressError("Username and password required", 401);
     }
-    const user = await User.validatePassword(username, password);
-    console.log(user)
+    const user = await User.validatePassword(username, password); // validate password
     const token = getToken(user); // create JWT
     User.updateLoginTimestamp(username); // update db login timestamp
     return res.json({ token });
