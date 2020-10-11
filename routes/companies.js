@@ -6,6 +6,9 @@ const {
   ensureAdmin,
   ensureCorrectUser,
 } = require("../middleware/authenticate");
+const jsonSchema = require("jsonschema");
+const companySchema = require("../schemas/companySchema")
+const updateCompanySchema = require("../schemas/updateCompanySchema");
 
 const router = new express.Router();
 
@@ -36,7 +39,18 @@ router.get("/:handle", authenticateJWT, async (req, res, next) => {
 // POST - add new company 
 
 router.post("/", ensureAdmin, async(req, res, next) => {
+// router.post("/", async(req, res, next) => {
+
   let data = req.body // company object 
+
+  let input = jsonSchema.validate(data, companySchema); // validate inputs with schema
+
+  if (!input.valid) {
+    // if invalid/incomplete input data - throw error
+    let error = new ExpressError("Invalid company fields", 401);
+    return next(error);
+  }
+  
   try {
     const newCompany = await Company.add(data) // add new company to db 
     return res.json({company: newCompany}) // return company object 
@@ -48,8 +62,18 @@ router.post("/", ensureAdmin, async(req, res, next) => {
 // PATCH - update company in db
 
 router.patch("/:handle", ensureAdmin, async(req, res, next) => {
+// router.patch("/:handle", async(req, res, next) => {
   let handle = req.params.handle
   let data = req.body 
+
+  let input = jsonSchema.validate(data, updateCompanySchema); // validate inputs with schema
+
+  if (!input.valid) {
+    // if invalid/incomplete input data - throw error
+    let error = new ExpressError("Invalid company fields", 401);
+    return next(error);
+  }
+
   try {
     const updateCompany = await Company.update(handle, data); // update db 
     return res.json({ updated: updateCompany });  // update db 
@@ -61,6 +85,8 @@ router.patch("/:handle", ensureAdmin, async(req, res, next) => {
 // DELETE - delete company from db
 
 router.delete("/:handle", ensureAdmin, async(req, res, next) => {
+// router.delete("/:handle", async(req, res, next) => {
+
   let handle = req.params.handle
   try {
     const deleteCompany = await Company.delete(handle) // delete from db
