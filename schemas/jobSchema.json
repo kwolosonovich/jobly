@@ -35,7 +35,7 @@
       "$id": "#/properties/equity",
       "type": "string",
       "title": "The equity schema",
-      "description": "Position equity.",
+      "description": "Position equity as a percentage.",
       "default": "",
       "examples": [".5"]
     },
