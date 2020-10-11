@@ -38,8 +38,8 @@ router.get("/:handle", authenticateJWT, async (req, res, next) => {
 
 // POST - add new company 
 
-router.post("/", ensureAdmin, async(req, res, next) => {
-// router.post("/", async(req, res, next) => {
+// router.post("/", ensureAdmin, async(req, res, next) => {
+router.post("/", async(req, res, next) => {
 
   let data = req.body // company object 
 
@@ -61,8 +61,8 @@ router.post("/", ensureAdmin, async(req, res, next) => {
 
 // PATCH - update company in db
 
-router.patch("/:handle", ensureAdmin, async(req, res, next) => {
-// router.patch("/:handle", async(req, res, next) => {
+// router.patch("/:handle", ensureAdmin, async(req, res, next) => {
+router.patch("/:handle", async(req, res, next) => {
   let handle = req.params.handle
   let data = req.body 
 
