@@ -5,11 +5,14 @@ const { SECRET_KEY } = require("../config");
 const ExpressError = require("../helpers/expressError");
 
 
-// Authenticate user
+// Authenticate user by verifying JWT
 
 function authenticateJWT(req, res, next) {
+      let inputToken = req.body.token || req.query.token;
+      console.log(inputToken);
   try {
-    const inputToken = req.body._token || req.query._token;
+    // const inputToken = req.body.token || req.query.token;
+    console.log(inputToken)
     const payload = jwt.verify(inputToken, SECRET_KEY);
     req.user = payload;
     res.locals.username = token.username;
@@ -19,11 +22,11 @@ function authenticateJWT(req, res, next) {
   }
 }
 
-// Requires user is admin
+// Verify if admin by validating token is_admin status
 
 function ensureAdmin(req, res, next) {
   try {
-    const inputToken = req.body._token;
+    const inputToken = req.body.token;
 
     let token = jwt.verify(inputToken, SECRET_KEY);
     res.locals.username = token.username;
@@ -37,17 +40,24 @@ function ensureAdmin(req, res, next) {
   }
 }
 
-// Requires correct username
+// Verify correct user by validating token username 
 
 function ensureCorrectUser(req, res, next) {
+  console.log(req.body)
+  console.log(token.username)
   try {
-    if (req.user.username === req.params.username) {
+    const inputToken = req.body.token;
+
+    let token = jwt.verify(inputToken, SECRET_KEY);
+
+    res.locals.username = token.username;
+
+    if (token.username === req.params.username) {
       return next();
-    } else {
-      return next({ status: 401, message: "Unauthorized" });
     }
+    throw new Error();
   } catch (err) {
-    return next({ status: 401, message: "Unauthorized" });
+    return next(new ExpressError("Unauthorized", 401));
   }
 }
 

@@ -12,6 +12,7 @@ const SECRET_KEY = process.env.SECRET_KEY || "secret";
 
 const BCRYPT_WORK_FACTOR = 12;
 
+
 module.exports = {
   data,
   SECRET_KEY,

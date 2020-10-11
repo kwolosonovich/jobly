@@ -7,14 +7,15 @@
   "default": {},
   "examples": [
     {
-      "username": "newUser1",
-      "first_name": "Frist",
-      "last_name": "Last",
+      "username": "AvaS",
+      "password": "password123",
+      "first_name": "Ava",
+      "last_name": "Smith",
       "email": "testemail@gmail.com",
       "photo_url": "https://picsum.photos/id/237/200/300"
     }
   ],
-  "required": ["username", "first_name", "last_name", "email"],
+  "required": ["username", "password", "first_name", "last_name", "email"],
   "properties": {
     "username": {
       "$id": "#/properties/username",
@@ -23,6 +24,16 @@
       "description": "New user account.",
       "default": "",
       "examples": ["AvaS"]
+    },
+    "password": {
+        "$id": "#/properties/password",
+        "type": "string",
+        "title": "The password schema",
+        "description": "User password.",
+        "default": "",
+        "examples": [
+            "password123"
+        ]
     },
     "first_name": {
       "$id": "#/properties/first_name",

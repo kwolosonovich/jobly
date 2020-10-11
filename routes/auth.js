@@ -12,7 +12,8 @@ router.post("/login", async (req, res, next) => {
     if (!username || !password) {
       throw new ExpressError("Username and password required", 401);
     }
-    const user = await User.authenticate(username, password);
+    const user = await User.validatePassword(username, password);
+    console.log(user)
     const token = getToken(user); // create JWT
     User.updateLoginTimestamp(username); // update db login timestamp
     return res.json({ token });

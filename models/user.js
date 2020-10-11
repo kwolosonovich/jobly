@@ -2,45 +2,51 @@ const db = require("../db");
 const ExpressError = require("../helpers/expressError");
 const sqlForPartialUpdate = require("../helpers/partialUpdate");
 const bcrypt = require("bcrypt");
-const { BCRYPT_WORK_FACTOR } = require("../config");
+const { BCRYPT_WORK_FACTOR } = require("../config")
 
 class User {
 
   // register new user
 
   static register = async (user) => {
-    const hashedPassword = await bcrypt.hash(user.password, BCRYPT_WORK_FACTOR); // hash password
+    const { username, password, first_name, last_name, email, photo_url} = user;
+
+    let hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
+
     const result = await db.query(  // add user to db 
       `INSERT INTO users (username, password, first_name, last_name, email, photo_url)
              VALUES ($1, $2, $3, $4, $5, $6)
              RETURNING username, is_admin`,
-      [
-        user.username,
+    [
+        username,
         hashedPassword,
-        user.first_name,
-        user.last_name,
-        user.email,
-        user.photo_url,
+        first_name,
+        last_name,
+        email,
+        photo_url,
       ]
     );
     return result; // return user object
-  };
+}
 
-  // authenticate user and return true/false
+  // validate username and password return true/false
 
-  static authenticate = async (username, inputPassword) => {
+  static validatePassword = async (username, inputPassword) => {
     const result = await db.query(
-      `SELECT password FROM users 
+      `SELECT * FROM users 
         WHERE username = $1`,
       [username]
     );
-    let dbPassword = result.rows[0].password;
-    let verified = await bcrypt.compare(inputpassword, dbPassword);
+
+    let dbPassword = result.rows[0];
+    console.log(dbPassword)
+    let verified = await bcrypt.compare(`${inputPassword}, ${dbPassword.password}`);
     if (verified) {
+        console.log(result)
         return result 
     }
     else {
-        throw ExpressError("Invalid Password", 401);
+        throw new ExpressError("Invalid Password", 401);
     }
   };
 
@@ -82,39 +88,9 @@ class User {
     return user;
   };
 
-  // register new user
-
-  static register = async (user) => {
-      console.log("method:")
-      console.log(user)
-    const result = await db.query(
-      `INSERT INTO users 
-                (username, password, first_name, last_name, email, photo_url)
-                VALUES ($1, $2, $3, $4, $5, $6)
-                RETURNING username, first_name, last_name, email, photo_url`,
-      [
-        user.username,
-        user.password,
-        user.first_name,
-        user.last_name,
-        user.email,
-        user.photo_url,
-      ]
-    );
-    return result.rows[0];
-  };
-
   // update user
 
   static update = async (username, userData) => {
-
-    // verify hashed password
-    if (userData.password) {
-        userData.password = await bcrypt.hash(
-          data.password,
-          BCRYPT_WORK_FACTOR
-        );
-    }
 
     const { query, values } = sqlForPartialUpdate(
       "users",
