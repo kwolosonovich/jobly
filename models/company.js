@@ -50,7 +50,7 @@ class Company {
     return result.rows;
   }
 
-  // get company by handle
+  // get company by handle 
 
   static handleName = async(handle) => {
     const result = await db.query(
