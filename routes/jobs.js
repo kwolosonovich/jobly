@@ -6,12 +6,18 @@ const {
   ensureAdmin,
   ensureCorrectUser,
 } = require("../middleware/authenticate");
+const jsonSchema = require("jsonschema");
+const jobSchema = require("../schemas/jobSchema")
+const updateJobSchema = require("../schemas/jobSchema");
+
 
 const router = new express.Router();
 
 // GET - all jobs with filter 
 
-router.get("/", authenticateJWT, async(req, res, next) => {
+// router.get("/", authenticateJWT, async(req, res, next) => {
+router.get("/", async(req, res, next) => {
+
     try {
         const result = await Job.getAll(req.query)  // query all jobs
         return res.json({ result }) // return array of jobs objects 
@@ -22,7 +28,9 @@ router.get("/", authenticateJWT, async(req, res, next) => {
 
 // GET - search by id
 
-router.get("/:id", authenticateJWT, async (req, res, next) => {
+// router.get("/:id", authenticateJWT, async (req, res, next) => {
+router.get("/:id", async (req, res, next) => {
+
   let id = req.params.id;
   try {
     const result = await Job.getID(id); // query jobs by company ID
@@ -33,22 +41,39 @@ router.get("/:id", authenticateJWT, async (req, res, next) => {
 });
 
 // POST - add new job 
+// router.post("/", ensureAdmin, async(req, res, next) => {
+router.post("/", async(req, res, next) => {
+  const data = req.body;
 
-router.post("/", ensureAdmin, async(req, res, next) => {
-    const data = req.body
-    try {
-      const result = await Job.add(data);  // add new job to db 
-      return res.json({ job: result });  // return job object 
-    } catch (err) {
-      return next(err);
-    }
+  let input = jsonSchema.validate(data, jobSchema); // validate inputs with schema
+
+  if (!input.valid) {
+    // if invalid/incomplete input data - throw error
+    let error = new ExpressError("Invalid job fields", 401);
+    return next(error);
+  }
+
+  try {
+    const result = await Job.add(data); // add new job to db
+    return res.json({ job: result }); // return job object
+  } catch (err) {
+    return next(err);
+  }
 })
 
 // PATCH - update job
-
-router.patch("/:id", ensureAdmin, async(req, res, next) => {
+// router.patch("/:id", ensureAdmin, async(req, res, next) => {
+router.patch("/:id", async(req, res, next) => {
     const id = req.params.id
     const data = req.body
+
+      let result = jsonSchema.validate(data, updateJobSchema); // validate inputs with schema
+      // if invalid/incomplete input data - throw error
+      if (!result.valid) {
+        let error = new ExpressError("Invalid user fields", 401);
+        return next(error);
+      }
+
     try {
       const result = await Job.update(id, data);  // update existing job in db 
       return res.json({ job: result });  // return updated job object 
@@ -58,8 +83,8 @@ router.patch("/:id", ensureAdmin, async(req, res, next) => {
 })
 
 // DELETE - delete job by id
-
-router.delete("/:id", ensureAdmin, async(req, res, next) => {
+// router.delete("/:id", ensureAdmin, async(req, res, next) => {
+router.delete("/:id", async(req, res, next) => {
     const id = req.params.id
     try {
       const result = await Job.delete(id);  // delete job from db 

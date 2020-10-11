@@ -1,16 +1,15 @@
 const express = require("express");
 const ExpressError = require("../helpers/expressError");
+const User = require("../models/user");
 const {
     authenticateJWT,
     ensureAdmin,
     ensureCorrectUser,
 } = require("../middleware/authenticate");
-const User = require("../models/user");
 const jsonSchema = require("jsonschema")
 const userSchema = require("../schemas/userSchema")
 const updateUserSchema = require("../schemas/updateUserSchema")
 const getToken = require("../helpers/token");
-const authenticate = require("../middleware/authenticate");
 
 const router = express.Router();
 
@@ -41,45 +40,45 @@ router.get("/:username", async (req, res, next) => {
 // POST - register a new user
 
 router.post("/", async (req, res, next) => {
-    let user = req.body
-    let input = jsonSchema.validate(user, userSchema);  // validate user inputs using user schema
+  let user = req.body;
+  let input = jsonSchema.validate(user, userSchema); // validate inputs with schema
 
-    if (!input.valid) {  // if invalid/incomplete input data - throw error 
-        let error = new ExpressError("Invalid user fields", 401)
-        return next(error);
-    }
+  if (!input.valid) {
+    // if invalid/incomplete input data - throw error
+    let error = new ExpressError("Invalid user fields", 401);
+    return next(error);
+  }
 
-    try {
-        let newUser = await User.register(user); // register user; add to db 
-        const token = await getToken(newUser); // get new JWT
-        User.updateLoginTimestamp(newUser.username); // update db login timestamp
-        return res.json({ token });
-    } catch (err) {
-        return next(err);
-    }
+  try {
+    let newUser = await User.register(user); // register user; add to db
+    const token = await getToken(newUser); // get new JWT
+    User.updateLoginTimestamp(newUser.username); // update db login timestamp
+    return res.json({ token });
+  } catch (err) {
+    return next(err);
+  }
 })
 
 // PATCH - update user; authenticate JWT to ensure correct user
 
 router.patch("/:username", ensureCorrectUser, async (req, res, next) => {
-    let username = req.params.username;
-    let userData = req.body;
-    console.log("okay");
+  let username = req.params.username;
+  let userData = req.body;
+  console.log("okay");
 
-    //   validate user inputs using update user schema
-    let result = jsonSchema.validate(userData, updateUserSchema);
-    // if invalid/incomplete input data - throw error
-    if (!result.valid) {
-        let error = new ExpressError("Invalid user fields", 401);
-        return next(error);
-    }
-    try {
-        const validate = await User.validatePassword(username, userData.password); // hash and validate password
-        const result = await User.update(username, userData);  //update user in db
-        return res.json({ updated: result }); // return user object
-    } catch (err) {
-        return next(err);
-    }
+  let result = jsonSchema.validate(userData, updateUserSchema); // validate inputs with schema
+  // if invalid/incomplete input data - throw error
+  if (!result.valid) {
+    let error = new ExpressError("Invalid user fields", 401);
+    return next(error);
+  }
+  try {
+    const validate = await User.validatePassword(username, userData.password); // hash and validate password
+    const result = await User.update(username, userData); //update user in db
+    return res.json({ updated: result }); // return user object
+  } catch (err) {
+    return next(err);
+  }
 })
 
 // DELETE - delete user; authenticate JWT and password to ensure correct user 
