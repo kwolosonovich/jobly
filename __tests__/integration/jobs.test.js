@@ -8,8 +8,6 @@ const {beforeEachHook, afterAllHook, testCompany, testJob, afterEachHook}  = req
 
 beforeEach(async() => {
     await beforeEachHook();
-    await testCompany()
-    await testJob();
 });
 
 describe("GET, /jobs", () => {
