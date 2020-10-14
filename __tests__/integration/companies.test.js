@@ -7,7 +7,6 @@ const {beforeEachHook, afterAllHook, testCompany}  = require("./jest.config")
 
 beforeEach(async() => {
     await beforeEachHook();
-    await testCompany()
 });
 
 describe("GET, /companies", () => {

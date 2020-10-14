@@ -9,9 +9,7 @@ class User {
   // register new user
 
   static register = async (user) => {
-    // const { username, password, first_name, last_name, email, photo_url} = user;
 
-    console.log(user)
     let hashedPassword = await bcrypt.hash(user.password, BCRYPT_WORK_FACTOR);
 
     console.log(hashedPassword)

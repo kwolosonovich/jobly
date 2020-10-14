@@ -31,4 +31,3 @@ CREATE TABLE jobs (
     date_posted timestamp with time zone
 );
 
-
