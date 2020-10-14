@@ -38,10 +38,14 @@ router.get("/:handle", authenticateJWT, async (req, res, next) => {
 
 // POST - add new company 
 
-// router.post("/", ensureAdmin, async(req, res, next) => {
-router.post("/", async(req, res, next) => {
-
-  let data = req.body // company object 
+router.post("/", ensureAdmin, async(req, res, next) => {
+ let data = {
+    handle: req.body.handle,
+    name: req.body.name,
+    num_employees: req.body.num_employees,
+    description: req.body.description,
+    logo_url: req.body.logo
+  }
 
   let input = jsonSchema.validate(data, companySchema); // validate inputs with schema
 
@@ -50,10 +54,10 @@ router.post("/", async(req, res, next) => {
     let error = new ExpressError("Invalid company fields", 401);
     return next(error);
   }
-  
+
   try {
-    const newCompany = await Company.add(data) // add new company to db 
-    return res.json({company: newCompany}) // return company object 
+    const newCompany = await Company.add(data); // add new company to db
+    return res.json({ company: newCompany }); // return company object
   } catch (err) {
     return next(err);
   }
@@ -61,10 +65,13 @@ router.post("/", async(req, res, next) => {
 
 // PATCH - update company in db
 
-// router.patch("/:handle", ensureAdmin, async(req, res, next) => {
-router.patch("/:handle", async(req, res, next) => {
+router.patch("/:handle", ensureAdmin, async(req, res, next) => {
   let handle = req.params.handle
-  let data = req.body 
+  let data = {
+    num_employees: req.body.num_employees,
+    description: req.body.description,
+    logo_url: req.body.logo,
+  }; 
 
   let input = jsonSchema.validate(data, updateCompanySchema); // validate inputs with schema
 
@@ -85,7 +92,6 @@ router.patch("/:handle", async(req, res, next) => {
 // DELETE - delete company from db
 
 router.delete("/:handle", ensureAdmin, async(req, res, next) => {
-// router.delete("/:handle", async(req, res, next) => {
 
   let handle = req.params.handle
   try {

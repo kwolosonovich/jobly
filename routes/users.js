@@ -41,13 +41,14 @@ router.get("/:username", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   let user = req.body;
-  let input = jsonSchema.validate(user, userSchema); // validate inputs with schema
+  // console.log(user)
+  // let input = jsonSchema.validate(user, userSchema); // validate inputs with schema
 
-  if (!input.valid) {
-    // if invalid/incomplete input data - throw error
-    let error = new ExpressError("Invalid user fields", 401);
-    return next(error);
-  }
+  // if (!input.valid) {
+  //   // if invalid/incomplete input data - throw error
+  //   let error = new ExpressError("Invalid user fields", 401);
+  //   return next(error);
+  // }
 
   try {
     let newUser = await User.register(user); // register user; add to db
@@ -59,22 +60,33 @@ router.post("/", async (req, res, next) => {
   }
 })
 
+
+
+// TODO: error: syntax error at or near "0"
+
 // PATCH - update user; authenticate JWT to ensure correct user
 
 router.patch("/:username", ensureCorrectUser, async (req, res, next) => {
   let username = req.params.username;
-  let userData = req.body;
-  console.log("okay");
 
-  let result = jsonSchema.validate(userData, updateUserSchema); // validate inputs with schema
+  let update = {
+     first_name: req.body.first_name, 
+     last_name: req.body.last_name, 
+     email: req.body.email,
+     photo_url: req.body.photo_url
+   }
+
+  let password = req.body.password;
+
+  let validateInputs = jsonSchema.validate(update, updateUserSchema); // validate inputs with schema
   // if invalid/incomplete input data - throw error
-  if (!result.valid) {
+  if (!validateInputs.valid) {
     let error = new ExpressError("Invalid user fields", 401);
     return next(error);
   }
   try {
-    const validate = await User.validatePassword(username, userData.password); // hash and validate password
-    const result = await User.update(username, userData); //update user in db
+    const validatePassword = await User.validatePassword(username, password); // hash and validate password
+    const result = await User.update(username, update); //update user in db
     return res.json({ updated: result }); // return user object
   } catch (err) {
     return next(err);

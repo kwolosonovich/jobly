@@ -31,7 +31,7 @@ app.use("/auth", authRouter)
 // log unhandledRejection reason and error  
 process.on("unhandledRejection", (reason, promise) => {
   console.log("Unhandled Rejection at:", promise, "reason:", reason);
-  const err = new ExpressError("Unhandled Rejection", 404);
+  const err = new ExpressError("Unhandled Rejection", 500);
   return next(err);
 });
 

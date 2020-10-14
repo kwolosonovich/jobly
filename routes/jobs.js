@@ -15,8 +15,7 @@ const router = new express.Router();
 
 // GET - all jobs with filter 
 
-// router.get("/", authenticateJWT, async(req, res, next) => {
-router.get("/", async(req, res, next) => {
+router.get("/", authenticateJWT, async(req, res, next) => {
 
     try {
         const result = await Job.getAll(req.query)  // query all jobs
@@ -28,8 +27,7 @@ router.get("/", async(req, res, next) => {
 
 // GET - search by id
 
-// router.get("/:id", authenticateJWT, async (req, res, next) => {
-router.get("/:id", async (req, res, next) => {
+router.get("/:id", authenticateJWT, async (req, res, next) => {
 
   let id = req.params.id;
   try {
@@ -41,9 +39,13 @@ router.get("/:id", async (req, res, next) => {
 });
 
 // POST - add new job 
-// router.post("/", ensureAdmin, async(req, res, next) => {
-router.post("/", async(req, res, next) => {
-  const data = req.body;
+router.post("/", ensureAdmin, async(req, res, next) => {
+  const data = {
+    title: req.body.title, 
+    salary: req.body.salary,
+    equity: req.body.equity,
+    company_handle: req.body.company_handle
+  }
 
   let input = jsonSchema.validate(data, jobSchema); // validate inputs with schema
 
@@ -62,10 +64,15 @@ router.post("/", async(req, res, next) => {
 })
 
 // PATCH - update job
-// router.patch("/:id", ensureAdmin, async(req, res, next) => {
-router.patch("/:id", async(req, res, next) => {
+router.patch("/:id", ensureAdmin, async(req, res, next) => {
     const id = req.params.id
-    const data = req.body
+    
+    const data = {
+      title: req.body.title,
+      salary: req.body.salary,
+      equity: req.body.equity,
+      company_handle: req.body.company_handle,
+    };
 
       let result = jsonSchema.validate(data, updateJobSchema); // validate inputs with schema
       // if invalid/incomplete input data - throw error
@@ -83,8 +90,7 @@ router.patch("/:id", async(req, res, next) => {
 })
 
 // DELETE - delete job by id
-// router.delete("/:id", ensureAdmin, async(req, res, next) => {
-router.delete("/:id", async(req, res, next) => {
+router.delete("/:id", ensureAdmin, async(req, res, next) => {
     const id = req.params.id
     try {
       const result = await Job.delete(id);  // delete job from db 

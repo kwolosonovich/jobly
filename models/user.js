@@ -9,24 +9,27 @@ class User {
   // register new user
 
   static register = async (user) => {
-    const { username, password, first_name, last_name, email, photo_url} = user;
+    // const { username, password, first_name, last_name, email, photo_url} = user;
 
-    let hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
+    console.log(user)
+    let hashedPassword = await bcrypt.hash(user.password, BCRYPT_WORK_FACTOR);
 
+    console.log(hashedPassword)
     const result = await db.query(  // add user to db 
-      `INSERT INTO users (username, password, first_name, last_name, email, photo_url)
-             VALUES ($1, $2, $3, $4, $5, $6)
+      `INSERT INTO users (username, password, first_name, last_name, email, photo_url, is_admin)
+             VALUES ($1, $2, $3, $4, $5, $6, $7)
              RETURNING username, is_admin`,
     [
-        username,
+        user.username,
         hashedPassword,
-        first_name,
-        last_name,
-        email,
-        photo_url,
+        user.first_name,
+        user.last_name,
+        user.email,
+        user.photo_url,
+        user.is_admin
       ]
     );
-    return result; // return user object
+    return result.rows[0]; // return username and is_admin
 }
 
   // validate username and password return true/false
@@ -40,7 +43,7 @@ class User {
 
     let dbPassword = result.rows[0];
     console.log(dbPassword)
-    let verified = await bcrypt.compare(`${inputPassword}, ${dbPassword.password}`);
+    let verified = await bcrypt.compare(inputPassword, dbPassword.password);
     if (verified) {
         console.log(result)
         return result 

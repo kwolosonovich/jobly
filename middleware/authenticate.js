@@ -12,7 +12,7 @@ function authenticateJWT(req, res, next) {
       console.log(inputToken);
   try {
     // const inputToken = req.body.token || req.query.token;
-    console.log(inputToken)
+    // console.log(inputToken)
     const payload = jwt.verify(inputToken, SECRET_KEY);
     req.user = payload;
     res.locals.username = token.username;
@@ -26,10 +26,10 @@ function authenticateJWT(req, res, next) {
 
 function ensureAdmin(req, res, next) {
   try {
-    const inputToken = req.body.token;
-
+    let inputToken = req.body.token;
     let token = jwt.verify(inputToken, SECRET_KEY);
-    res.locals.username = token.username;
+    
+    res.locals.is_admin = token.is_admin
 
     if (token.is_admin) {
       return next();
@@ -44,7 +44,6 @@ function ensureAdmin(req, res, next) {
 
 function ensureCorrectUser(req, res, next) {
   console.log(req.body)
-  console.log(token.username)
   try {
     const inputToken = req.body.token;
 
