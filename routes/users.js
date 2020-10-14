@@ -42,13 +42,13 @@ router.get("/:username", async (req, res, next) => {
 router.post("/", async (req, res, next) => {
   let user = req.body;
   // console.log(user)
-  // let input = jsonSchema.validate(user, userSchema); // validate inputs with schema
+  let input = jsonSchema.validate(user, userSchema); // validate inputs with schema
 
-  // if (!input.valid) {
-  //   // if invalid/incomplete input data - throw error
-  //   let error = new ExpressError("Invalid user fields", 401);
-  //   return next(error);
-  // }
+  if (!input.valid) {
+    // if invalid/incomplete input data - throw error
+    let error = new ExpressError("Invalid user fields", 401);
+    return next(error);
+  }
 
   try {
     let newUser = await User.register(user); // register user; add to db
@@ -60,9 +60,6 @@ router.post("/", async (req, res, next) => {
   }
 })
 
-
-
-// TODO: error: syntax error at or near "0"
 
 // PATCH - update user; authenticate JWT to ensure correct user
 
