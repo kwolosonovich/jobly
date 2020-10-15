@@ -4,10 +4,10 @@ const request = require("supertest");
 const app = require("../../app");
 const getToken = require("../../helpers/token");
 
-const { beforeEachHook, afterAllHook } = require("./jest.config");
+const { beforeEachHook, afterAllHook, TEST_DATA } = require("./jest.config");
 
 beforeEach(async function () {
-  await beforeEachHook();
+  await beforeEachHook(TEST_DATA);
   // await addTestUser();
 });
 
@@ -21,9 +21,9 @@ describe("GET, /users", () => {
 
 describe("GET, /users/:username", () => {
     test("get username", async() => {
-        const result = await request(app).get("/users/testUserName");
+        const result = await request(app).get("/users/testUser");
         expect(result.statusCode).toBe(201);  
-        expect(result.body.user.username).toEqual("testUserName");    
+        expect(result.body.user.username).toEqual("testUser");    
     })
 })
 
@@ -37,35 +37,36 @@ describe("POST, /users", () => {
           email: "testEmail2",
           photo_url: "testURL2",
         });
-        const token = await getToken(newUser); // get JWT
 
-        console.log(token)
         expect(result.statusCode).toBe(200); 
-        expect(result.body.user.username).toEqual("testUser2");    
+        expect(result.body).toHaveProperty("token");    
     })
 })
 
-// describe("PATCH /users/username", () => {
-//   test("update user data", async () => {
-//     const result = await request(app).patch("/users/testUserName").send({
-//       username: "updatedUserName",
-//       first_name: "testFirstName2",
-//       last_name: "testLastName2",
-//       email: "testEmail2",
-//       photo_url: "testURL2",
-//     });
-//     expect(result.statusCode).toBe(200);
-//     expect(result.body).toHaveProperty("updated");
-//   });
-// });
+describe("PATCH /users/username", () => {
+  test("update user data", async () => {
+    const result = await request(app).patch("/users/testUser").send({
+      first_name: "testFirstName2",
+      last_name: "testLastName2",
+      email: "updated",
+      photo_url: "testURL2",
+      token: TEST_DATA.userToken
+    });
 
-// describe("DELETE /users/username", () => {
-//     test('delete user', async() => {
-//         const result = await request(app).delete("/users/testUserName");
-//         expect(result.statusCode).toBe(200)
-//         expect(result.text).toContain("User deleted")
-//     })
-// })
+    console.log(result.body);
+
+    expect(result.statusCode).toBe(200);
+    expect(result.body).toHaveProperty("updated");
+  });
+});
+
+describe("DELETE /users/username", () => {
+    test('delete user', async() => {
+        const result = await request(app).delete("/users/testUserName");
+        expect(result.statusCode).toBe(200)
+        expect(result.text).toContain("User deleted")
+    })
+})
 
 
 afterAll(async function () {

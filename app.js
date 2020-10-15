@@ -28,23 +28,13 @@ app.use("/users", usersRouter)
 app.use("/auth", authRouter)
 
 
-// log unhandledRejection reason and error  
-process.on("unhandledRejection", (reason, promise) => {
-  console.log("Unhandled Rejection at:", promise, "reason:", reason);
-  const err = new ExpressError("Unhandled Rejection", 500);
-  return next(err);
-});
-
-
 /** 404 handler */
-
 app.use(function(req, res, next) {
   const err = new ExpressError("Not Found", 404);
   return next(err);
 });
 
 /** general error handler */
-
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   console.error(err.stack);
