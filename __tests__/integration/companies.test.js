@@ -3,7 +3,7 @@ process.env.NODE_ENV = "test";
 const request = require('supertest')
 const app = require("../../app");
 
-const {beforeEachHook, afterAllHook, testCompany}  = require("./jest.config")
+const {beforeEachHook, afterAllHook}  = require("./jest.config")
 
 beforeEach(async() => {
     await beforeEachHook();

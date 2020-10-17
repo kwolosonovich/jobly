@@ -44,12 +44,12 @@ class Job {
 
   // get job by id 
 
-  static getID = async(id) => {
+  static getID = async (id) => {
     const result = await db.query(
-        `SELECT title, salary, equity, company_handle 
+      `SELECT title, salary, equity, company_handle 
         FROM jobs 
         WHERE id = $1`,
-        [id] 
+      [id]
     );
     const job = result.rows[0]
     if (!job) {
@@ -60,16 +60,16 @@ class Job {
 
   // add new job
 
-  static add = async(data) => {
+  static add = async (data) => {
     const result = await db.query(
       `INSERT INTO jobs 
       (title, salary, equity, company_handle, date_posted) 
       VALUES ($1, $2, $3, $4, current_timestamp)
-      RETURNING id, title, salary, equity, company_handle, current_timestamp`, 
+      RETURNING id, title, salary, equity, company_handle, current_timestamp`,
       [
-        data.title, 
-        data.salary, 
-        data.equity, 
+        data.title,
+        data.salary,
+        data.equity,
         data.company_handle
       ]
     )
@@ -77,8 +77,11 @@ class Job {
   }
 
   // update job
-  static update = async(id, data) => {
-    let { query, values } = sqlForPartialUpdate(
+  static update = async (id, data) => {
+    let {
+      query,
+      values
+    } = sqlForPartialUpdate(
       "jobs",
       data,
       "id",
@@ -87,24 +90,24 @@ class Job {
     const result = await db.query(query, values);
     const job = result.rows[0]
     if (!job) {
-      throw new ExpressError("Job not found", 404);  
+      throw new ExpressError("Job not found", 404);
     }
     return job
   }
 
   // delete job 
 
-  static delete = async(id) => {
+  static delete = async (id) => {
     const result = await db.query(
       `DELETE FROM jobs 
       WHERE id = $1
       RETURNING id`,
       [id]
     )
-  if (result.rows.length === 0) {
-    throw new ExpressError("Job not found", 404);
-  }
-  return result.rows[0]
+    if (result.rows.length === 0) {
+      throw new ExpressError("Job not found", 404);
+    }
+    return result.rows[0]
   }
 
 }

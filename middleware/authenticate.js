@@ -1,18 +1,18 @@
 // authentication middleware
 
 const jwt = require("jsonwebtoken");
-const { SECRET_KEY } = require("../config");
+const {
+  SECRET_KEY
+} = require("../config");
 const ExpressError = require("../helpers/expressError");
 
 
 // Authenticate user by verifying JWT
 
 function authenticateJWT(req, res, next) {
-      let inputToken = req.body.token || req.query.token;
-      console.log(inputToken);
+  let inputToken = req.body.token || req.query.token;
   try {
     // const inputToken = req.body.token || req.query.token;
-    // console.log(inputToken)
     const payload = jwt.verify(inputToken, SECRET_KEY);
     req.user = payload;
     res.locals.username = token.username;
@@ -28,7 +28,7 @@ function ensureAdmin(req, res, next) {
   try {
     let inputToken = req.body.token;
     let token = jwt.verify(inputToken, SECRET_KEY);
-    
+
     res.locals.is_admin = token.is_admin
 
     if (token.is_admin) {
@@ -43,7 +43,6 @@ function ensureAdmin(req, res, next) {
 // Verify correct user by validating token username 
 
 function ensureCorrectUser(req, res, next) {
-  console.log(req.body)
   try {
     const inputToken = req.body.token;
 

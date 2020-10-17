@@ -18,7 +18,9 @@ router.post("/login", async (req, res, next) => {
     const user = await User.validatePassword(username, password); // validate password
     const token = getToken(user); // create JWT
     User.updateLoginTimestamp(username); // update db login timestamp
-    return res.json({ token });
+    return res.json({
+      token
+    });
   } catch (err) {
     return next(err);
   }

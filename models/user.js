@@ -11,8 +11,6 @@ class User {
   static register = async (user) => {
 
     let hashedPassword = await bcrypt.hash(user.password, BCRYPT_WORK_FACTOR);
-
-    console.log(hashedPassword)
     const result = await db.query(  // add user to db 
       `INSERT INTO users (username, password, first_name, last_name, email, photo_url, is_admin)
              VALUES ($1, $2, $3, $4, $5, $6, $7)
@@ -40,10 +38,8 @@ class User {
     );
 
     let dbPassword = result.rows[0];
-    console.log(dbPassword)
-    let verified = await bcrypt.compare(inputPassword, dbPassword.password);
+    let verified = await bcrypt.compare(inputPassword, dbPassword.password); 
     if (verified) {
-        console.log(result)
         return result 
     }
     else {

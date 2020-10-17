@@ -5,7 +5,7 @@ const sqlForPartialUpdate = require("../helpers/partialUpdate");
 class Company {
   // Get all companies - with filter
 
-  static getAll = async(data) => {
+  static getAll = async (data) => {
     let baseQuery = `SELECT handle, name FROM companies`;
     let whereExpressions = [];
     let queryValues = [];
@@ -52,7 +52,7 @@ class Company {
 
   // get company by handle 
 
-  static handleName = async(handle) => {
+  static handleName = async (handle) => {
     const result = await db.query(
       `SELECT handle, name, num_employees, description, logo_url
             FROM companies
@@ -71,7 +71,7 @@ class Company {
 
   // add new company 
 
-  static add = async(data) => {
+  static add = async (data) => {
     // check for duplicates 
     const result = await db.query(
       `SELECT handle 
@@ -106,8 +106,11 @@ class Company {
 
   // update company
 
-  static update = async(handle, data) => {
-    let { query, values } = sqlForPartialUpdate(
+  static update = async (handle, data) => {
+    let {
+      query,
+      values
+    } = sqlForPartialUpdate(
       "companies",
       data,
       "handle",
@@ -126,7 +129,7 @@ class Company {
 
   // delete company
 
-  static delete = async(handle) => {
+  static delete = async (handle) => {
     const result = await db.query(
       `DELETE FROM companies 
           WHERE handle = $1 
