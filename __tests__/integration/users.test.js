@@ -23,48 +23,62 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const app = require("../../app");
 const db = require("../../db");
+const {SECRET_KEY,
+  BCRYPT_WORK_FACTOR
+} = require("../../config")
 
 
-const User = require("../../models/user");
-const ExpressError = require("../../helpers/expressError");
+// const User = require("../../models/user");
+// const ExpressError = require("../../helpers/expressError");
 
 
 
-let AUTH = {
-  token: undefined,
-  username: undefined,
-};
+// let AUTH = {
+//   username: undefined,
+//   token: undefined,
+// };
+
+let user;
+let token;
+
+
 
 beforeEach = async () => {
 
   try {
-    const hashedPassword = await bcrypt.hash("secret", 1);
+    let hashedPassword = await bcrypt.hash("secret", 1);
 
-    // await db.query(
-    //   `INSERT INTO users (username, password, first_name, last_name, email, is_admin)
-    //                 VALUES ('testUser', $1, 'testFrist', 'testLast', 'test@email.com', true) RETURNING username, is_admin`,
-    //   [hashedPassword]
-    // );
+    await db.query(
+      `INSERT INTO users (username, password, first_name, last_name, email, is_admin)
+                    VALUES ('testUser', $1, 'testFrist', 'testLast', 'test@email.com', true) RETURNING username, is_admin`,
+      [hashedPassword]
+    );
 
-    await User.add({
-      username: "testUser",
-      password: hashedPassword,
-      first_name: "testFirst",
-      last_name: "testLast",
-      email: "test@gmail.com",
-      photo_url: "testURL",
-      is_admin: "true"
-    });
+    user = results.rows[0];
+    token = jwt.sign(
+      { username: user.username, is_admin: user.is_admin },
+      SECRET_KEY
+    );
 
-    const received = await request(app).post("/login").send({
-      username: "testUser",
-      password: "password",
-    });
+    // await User.add({
+    //   username: 'testUser',
+    //   password: hashedPassword,
+    //   first_name: 'testFirst',
+    //   last_name: 'testLast',
+    //   email: 'test@gmail.com',
+    //   photo_url: 'testURL',
+    //   is_admin: 'true'
+    // });
 
-    console.log(received)
+    // const received = await request(app).post("/login").send({
+    //   username: "testUser",
+    //   password: "password",
+    // });
 
-    AUTH.token = result.body.token;
-    AUTH.username = jwt.decode(AUTH.token).username;
+    // console.log(received)
+
+    // AUTH.token = received.body.token;
+    // AUTH.username = jwt.decode(AUTH.token).username;
 
   } catch (error) {
     return error;
@@ -72,20 +86,23 @@ beforeEach = async () => {
 };
 
 
+afterEach(async () => {
+  await db.query(`DELETE FROM users`);
+});
+
+
 describe("GET, /users", () => {
   test("get users", async () => {
-    const received= await request(app).get('/users');
-    console.log(result.body.users)
-    expect(received.statusCode).toBe(200);
+    const received = await request(app).get('/users');
+=    expect(received.statusCode).toBe(200);
     expect(received.body.users[0]).toHaveProperty("username");
   });
 });
 
 describe("GET, /users/:username", () => {
   test("get username", async () => {
-    const received= await request(app).get("/users/testUser");
+    const received = await request(app).get("/users/testUser");
     expect(received.statusCode).toBe(201);
-    console.log(result.body)
     expect(received.body.user.username).toEqual("testUser");
   });
 });
@@ -136,13 +153,13 @@ describe("GET, /users/:username", () => {
 //   await db.end();
 // });
 
-afterEach(async function () {
-  try {
-    await db.query("DELETE FROM users");
-  } catch (error) {
-    console.error(error);
-  }
-});
+// afterEach(async function () {
+//   try {
+//     await db.query("DELETE FROM users");
+//   } catch (error) {
+//     console.error(error);
+//   }
+// });
 
 afterAll(async function () {
     try {
@@ -170,3 +187,4 @@ afterAll(async function () {
 //     console.error(err);
 //   }
 // }
+
