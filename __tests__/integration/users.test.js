@@ -21,20 +21,12 @@ process.env.NODE_ENV = "test";
 const request = require("supertest");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-
 const app = require("../../app");
-// const db = "jobly-test";
 const db = require("../../db");
 
 
 const User = require("../../models/user");
 const ExpressError = require("../../helpers/expressError");
-
-// const { Client } = require("pg");
-// const client = new Client("jobly-test");
-
-
-// client.connect();
 
 
 
@@ -44,23 +36,32 @@ let AUTH = {
 };
 
 beforeEach = async () => {
-  // await db.query("DELETE FROM companies");
-  // await db.query("DELETE FROM jobs");
-  await db.query("DELETE FROM users");
 
   try {
     const hashedPassword = await bcrypt.hash("secret", 1);
 
-    await db.query(
-      `INSERT INTO users (username, password, first_name, last_name, email, is_admin)
-                    VALUES ('testUser', $1, 'testFrist', 'testLast', 'test@email.com', true) RETURNING username, is_admin`,
-      [hashedPassword]
-    );
+    // await db.query(
+    //   `INSERT INTO users (username, password, first_name, last_name, email, is_admin)
+    //                 VALUES ('testUser', $1, 'testFrist', 'testLast', 'test@email.com', true) RETURNING username, is_admin`,
+    //   [hashedPassword]
+    // );
 
-    const received= await request(app).post("/login").send({
+    await User.add({
+      username: "testUser",
+      password: hashedPassword,
+      first_name: "testFirst",
+      last_name: "testLast",
+      email: "test@gmail.com",
+      photo_url: "testURL",
+      is_admin: "true"
+    });
+
+    const received = await request(app).post("/login").send({
       username: "testUser",
       password: "password",
     });
+
+    console.log(received)
 
     AUTH.token = result.body.token;
     AUTH.username = jwt.decode(AUTH.token).username;
