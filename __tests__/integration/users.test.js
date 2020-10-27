@@ -50,7 +50,7 @@ beforeEach = async () => {
 
     await db.query(
       `INSERT INTO users (username, password, first_name, last_name, email, is_admin)
-                    VALUES ('testUser', $1, 'testFrist', 'testLast', 'test@email.com', true) RETURNING username, is_admin`,
+      VALUES ('testUser', password1, 'testFrist', 'testLast', 'test@email.com', true) RETURNING username, is_admin`,
       [hashedPassword]
     );
 
@@ -94,7 +94,7 @@ afterEach(async () => {
 describe("GET, /users", () => {
   test("get users", async () => {
     const received = await request(app).get('/users');
-=    expect(received.statusCode).toBe(200);
+    expect(received.statusCode).toBe(200);
     expect(received.body.users[0]).toHaveProperty("username");
   });
 });
@@ -187,4 +187,3 @@ afterAll(async function () {
 //     console.error(err);
 //   }
 // }
-
