@@ -1,6 +1,6 @@
 const express = require("express");
 const User = require("../models/user");
-const getToken = require("../helpers/token")
+const create = require("../helpers/token");
 const ExpressError = require("../helpers/expressError");
 
 const router = new express.Router();
@@ -16,7 +16,7 @@ router.post("/login", async (req, res, next) => {
       throw new ExpressError("Username and password required", 401);
     }
     const user = await User.validatePassword(username, password); // validate password
-    const token = getToken(user); // create JWT
+    const token = create(user); // create JWT
     User.updateLoginTimestamp(username); // update db login timestamp
     return res.json({
       token
