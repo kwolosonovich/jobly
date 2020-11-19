@@ -14,7 +14,7 @@ let AUTH = {
   token: undefined,
 };
 
-beforeEach (async () => {
+beforeAll (async () => {
   db.query(
     `DELETE FROM users`
   )
@@ -29,6 +29,9 @@ beforeEach (async () => {
     );
 
     let user = results.rows[0];
+    AUTH.username = results.rows[0].username
+    AUTH.token = results.rows[0].username;
+
     let token = jwt.sign(
       { username: user.username, is_admin: user.is_admin },
       SECRET_KEY
@@ -43,13 +46,14 @@ beforeEach (async () => {
   }
 });
 
-afterEach(async () => {
-  await db.query(`DELETE FROM users`);
-});
 
 describe("GET, /users", () => {
   test("get users", async () => {
-    const received = await request(app).get('/users');
+    console.log(AUTH.token)
+    const received = await request(app)
+      .get("/users")
+      .send({token: `${AUTH.token}` });
+
     expect(received.statusCode).toBe(200);
     expect(received.body.users[0]).toHaveProperty("username");
   });
@@ -104,10 +108,14 @@ describe("DELETE /users/username", () => {
   });
 });
 
-afterEach(async function () {
-  try {
-    await db.query("DELETE FROM users");
-  } catch (error) {
-    console.error(error);
-  }
+// afterEach(async function () {
+//   try {
+//     await db.query("DELETE FROM users");
+//   } catch (error) {
+//     console.error(error);
+//   }
+// });
+
+afterAll(async () => {
+  await db.query(`DELETE FROM users`);
 });
