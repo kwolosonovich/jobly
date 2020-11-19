@@ -36,8 +36,10 @@ class User {
         WHERE username = $1`,
       [username]
     );
-
     let dbPassword = result.rows[0];
+    // check if password is found
+    if (!dbPassword) throw new ExpressError("Invalid password", 401);
+    // verify password
     let verified = await bcrypt.compare(inputPassword, dbPassword.password); 
     if (verified) {
         return result 
