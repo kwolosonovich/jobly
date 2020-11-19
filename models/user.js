@@ -2,31 +2,48 @@ const db = require("../db");
 const ExpressError = require("../helpers/expressError");
 const sqlForPartialUpdate = require("../helpers/partialUpdate");
 const bcrypt = require("bcrypt");
-const { BCRYPT_WORK_FACTOR } = require("../config")
+const { BCRYPT_WORK_FACTOR } = require("../config");
 
 class User {
-
   // register new user
 
   static register = async (user) => {
+    const duplicateCheck = await db.query(
+      `SELECT username 
+        FROM users 
+        WHERE username = $1`,
+      [data.username]
+    );
+
+    if (duplicateCheck.rows[0]) {
+      throw new ExpressError(
+        `There already exists a user with username '${data.username}`,
+        400
+      );
+    }
 
     let hashedPassword = await bcrypt.hash(user.password, BCRYPT_WORK_FACTOR);
-    const result = await db.query(  // add user to db 
+    const result = await db.query(
+      // add user to db
       `INSERT INTO users (username, password, first_name, last_name, email, photo_url, is_admin)
-             VALUES ($1, $2, $3, $4, $5, $6, $7)
-             RETURNING username, is_admin`,
-    [
+              VALUES ($1, $2, $3, $4, $5, $6, $7)
+              RETURNING username, is_admin`,
+      [
         user.username,
         hashedPassword,
         user.first_name,
         user.last_name,
         user.email,
         user.photo_url,
-        user.is_admin
+        user.is_admin,
       ]
     );
-    return result.rows[0]; // return username and is_admin
-}
+    if (result) {
+      return result.rows[0];
+    } else {
+      throw new ExpressError("Invalid", 401);
+    }
+  };
 
   // validate username and password return true/false
 
@@ -40,12 +57,11 @@ class User {
     // check if password is found
     if (!dbPassword) throw new ExpressError("Invalid password", 401);
     // verify password
-    let verified = await bcrypt.compare(inputPassword, dbPassword.password); 
+    let verified = await bcrypt.compare(inputPassword, dbPassword.password);
     if (verified) {
-        return result 
-    }
-    else {
-        throw new ExpressError("Invalid Password", 401);
+      return result;
+    } else {
+      throw new ExpressError("Invalid Password", 401);
     }
   };
 
@@ -90,7 +106,6 @@ class User {
   // update user
 
   static update = async (username, userData) => {
-
     const { query, values } = sqlForPartialUpdate(
       "users",
       userData,
