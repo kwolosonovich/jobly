@@ -10,14 +10,13 @@ const ExpressError = require("../helpers/expressError");
 // Authenticate user by verifying JWT
 
 function authenticateJWT(req, res, next) {
-  let inputToken = req.body.token || req.query.token;
   try {
-    // const inputToken = req.body.token || req.query.token;
-    const payload = jwt.verify(inputToken, SECRET_KEY);
-    req.user = payload;
+    const inputToken = req.body.token || req.query.token;
+    let token = jwt.verify(inputToken, SECRET_KEY);
     res.locals.username = token.username;
     return next();
   } catch (err) {
+    console.log(err);
     return next(new ExpressError("Unathorized", 401));
   }
 }
@@ -26,7 +25,8 @@ function authenticateJWT(req, res, next) {
 
 function ensureAdmin(req, res, next) {
   try {
-    let inputToken = req.body.token;
+    // let inputToken = req.body.token;
+    let inputToken = req.headers.token
     let token = jwt.verify(inputToken, SECRET_KEY);
 
     res.locals.is_admin = token.is_admin
