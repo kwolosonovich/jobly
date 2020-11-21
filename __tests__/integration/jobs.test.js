@@ -53,7 +53,7 @@ describe("POST /jobs", () => {
 
 describe("PATCH /jobs/id", () => {
   test("update job data", async () => {
-    const result = await request(app).patch(`/jobs/${testJob.id}`).send({
+    const result = await request(app).patch(`/jobs/999`).send({
       name: "Job1",
       num_employees: 20,
       description: "Job1 description",

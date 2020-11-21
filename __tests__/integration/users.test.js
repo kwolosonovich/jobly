@@ -79,20 +79,27 @@ describe("POST, /users", () => {
   });
 });
 
-describe("PATCH /users/username", () => {
+describe("PATCH /users/:username", () => {
   test("update user data", async () => {
-    const received = await request(app).patch(`/users/${AUTH.user}`).send({
-      first_name: "testFirstName2",
-      password: "secret"
-    });
+    const received = await request(app)
+      .patch(`/users/${AUTH.user}`)
+      .send({
+        first_name: "update",
+        last_name: "update",
+        email: "update",
+        photo_url: "update",
+        token: `${AUTH.token}`,
+      });
 
-    debugger
+    //debugger
+
+    console.log(received.body)
 
     let update = request.first_name
     let password = request.password
 
     expect(received.statusCode).toBe(200);
-    expect(received.body).toHaveProperty("updated");
+    expect(received.body).toHaveProperty("testFirstName2");
   });
 });
 
